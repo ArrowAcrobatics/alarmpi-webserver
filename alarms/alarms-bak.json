@@ -1,0 +1,44 @@
+{
+    "alarms": [
+        {
+            "hidden": {
+                "guid": "a",
+                "index": 0,
+                "name": "foo"
+            },
+            "settings": {
+                "active": true,
+                "time": "09:00"
+            },
+            "days": {
+                "monday": true,
+                "tuesday": true,
+                "wednesday": false,
+                "thursday": false,
+                "friday": false,
+                "saturday": false,
+                "sunday": false
+            }
+        },
+        {
+            "hidden": {
+                "guid": "peepee",
+                "index": 1,
+                "name": "alarmpi"
+            },
+            "settings": {
+                "active": true,
+                "time": "16:00"
+            },
+            "days": {
+                "monday": true,
+                "tuesday": true,
+                "wednesday": true,
+                "thursday": true,
+                "friday": true,
+                "saturday": false,
+                "sunday": false
+            }
+        }
+    ]
+}
