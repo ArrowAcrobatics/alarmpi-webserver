@@ -5,6 +5,7 @@ import * as fs from 'node:fs/promises';
 
 import * as path from 'path';
 import {fileURLToPath} from 'url';
+import {VlcBridge} from "./js/vlc-bridge.js";
 
 console.log("starting server: " + new Date());
 
@@ -54,11 +55,37 @@ async function setAlarms(alarmsJson) {
     console.log(alarmFileRead + " updated");
 }
 
+
 // init express app
 const app = express();
 app.use(express.static(path.join(rootDir, 'static')));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
+
+
+// init vlc
+const vlcbridge = new VlcBridge(true);
+// TODO: add media
+
+async function execVlcCommand(vlcJson) {
+    return;
+    switch(vlcJson.cmd){
+        case "open":
+            await vlcbridge.open();
+            break;
+        case "close":
+            await vlcbridge.close();
+            break;
+        case "play":
+            await vlcbridge.play();
+            break;
+        case "pause":
+            await vlcbridge.pause();
+            break;
+        default:
+            console.log("vlc cmd not implemented"); // TODO: throw instead
+    }
+}
 
 // endpoints
 app.get("/", async (request, response) => {
@@ -76,6 +103,20 @@ app.post("/", async (request, response) => {
             });
         })
         .catch(err => console.log("failed setting alarms!"));
+});
+
+app.post("/vlc", async (request, response) => {
+    console.log("post request: /vlc from: " + request.headers.host);
+    console.log(request.body);
+
+    execVlcCommand(request.body)
+        .then(() => {
+            response.status(200).json({
+                status: "success",
+                timestamp: Date.now(),
+            });
+        })
+        .catch(err => console.log("failed to handle vlc command"));
 });
 
 // open port

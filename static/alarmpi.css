@@ -1,3 +1,11 @@
 .bg-custom-light {
     background-color: #eab4cd;
 }
+
+.bg-custom-vlc-debug {
+    background-color: #6fc3ce;
+}
+
+.button i {
+  pointer-events: none;
+}
