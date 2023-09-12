@@ -77,7 +77,7 @@ await fs.readdir(alarmSoundFolder).then(soundfiles => {
 });
 
 async function execVlcCommand(vlcJson) {
-    return;
+    // return;
     switch(vlcJson.cmd){
         case "open":
             await vlcbridge.open();
