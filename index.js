@@ -15,6 +15,8 @@ let pugOptions = {basedir: rootDir};
 let alarmFileRead = 'alarms/alarms.json';
 let alarmFileWrite = 'alarms/alarms-pending-update.json';
 
+let alarmSoundFolder = rootDir + "/sounds";
+
 let pugAlarmClientFile = 'alarm-client';
 let pugAlarmClientFileOrig = 'html/' + pugAlarmClientFile + '.pug';
 let pugAlarmClientFileGen = 'static/js/gen/' + pugAlarmClientFile + '.js';
@@ -63,9 +65,16 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 
-// init vlc
+// init vlc, add media
 const vlcbridge = new VlcBridge(true);
-// TODO: add media
+await vlcbridge.open();
+await fs.readdir(alarmSoundFolder).then(soundfiles => {
+    soundfiles.forEach(file => {
+        vlcbridge.add(file).then(() => {
+            console.log("added " + file + " to playlist");
+        });
+    });
+});
 
 async function execVlcCommand(vlcJson) {
     return;

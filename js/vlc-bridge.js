@@ -25,6 +25,7 @@ export class VlcBridge {
         return new Promise((resolve, reject) => {
             let options = [
                 "-f",
+                "--quiet",
                 "--no-playlist-autostart",
                 "--no-video-title-show",
                 "-I", "rc"
