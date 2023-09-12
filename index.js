@@ -70,7 +70,7 @@ const vlcbridge = new VlcBridge(true);
 await vlcbridge.open();
 await fs.readdir(alarmSoundFolder).then(soundfiles => {
     soundfiles.forEach(file => {
-        vlcbridge.add(file).then(() => {
+        vlcbridge.add(alarmSoundFolder + "/" + file).then(() => {
             console.log("added " + file + " to playlist");
         });
     });
