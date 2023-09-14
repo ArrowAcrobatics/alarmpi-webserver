@@ -8,21 +8,22 @@ import {AlarmStorage} from "./alarm-storage.js";
 export class AppBackend {
     constructor(settings) {
         this.settings = settings;
-        this.vlcbridge = new VlcBridge(true);
-        this.alarmScheduler = new AlarmScheduler(this.vlcbridge, true);
+        this.vlcbridge = new VlcBridge(settings);
         this.alarmStorage = new AlarmStorage(settings);
+        this.alarmScheduler = new AlarmScheduler(this.vlcbridge, settings);
         this.pugRenderAlarmsPage = null;
     }
-
 
     async init() {
         await this.initPug();
         await this.initVlc();
     }
+
     async initVlc() {
         await this.vlcbridge.open().catch((e) =>
             console.warn(`Failed to open VLC ${e}`));
 
+        // load the sound files into the vlc bridge.
         fs.readdir(this.settings.alarmSoundFolder)
             .then(soundfiles => {
                 soundfiles.forEach(file => {
@@ -37,6 +38,11 @@ export class AppBackend {
             });
     }
 
+    /**
+     * Constructs rendering funcs for back-/frontend and .js file for static front end loading.
+     * Async because of file operations.
+     * @returns {Promise<void>}
+     */
     async initPug() {
         // pug init
         let pugAlarmClientFile = 'alarm-client';
@@ -61,11 +67,17 @@ export class AppBackend {
         await fs.writeFile(pugAlarmClientFileGen, pugRenderAlarmClientJsStr);
     }
 
+    /**
+     * Get request handler: Renders the alarms view from disk.
+     */
     async onGetIndex(request, response) {
         console.log("get request: / from: " + request.headers.host);
         response.send(this.pugRenderAlarmsPage(await this.alarmStorage.getAlarms()));
     }
 
+    /**
+     * Post request handler: Writes new alarm settings to disk.
+     */
     async onPostAlarm(request, response) {
         console.log("post request: / from: " + request.headers.host);
         this.alarmStorage.setAlarms(request.body)
@@ -78,6 +90,9 @@ export class AppBackend {
             .catch(err => console.log("failed setting alarms!"));
     }
 
+    /**
+     * Post request handler: Executes a VLC command (if backend is available).
+     */
     async onPostVlcCommand(request, response) {
         console.log("post request: /vlc from: " + request.headers.host);
         console.log(request.body);
@@ -93,7 +108,7 @@ export class AppBackend {
     }
 
     async execVlcCommand(vlcJson) {
-        // return;
+        // TODO: propagate possible failure to execute
         switch (vlcJson.cmd) {
             case "open":
                 await this.vlcbridge.open();
@@ -108,7 +123,7 @@ export class AppBackend {
                 await this.vlcbridge.pause();
                 break;
             default:
-                console.log("vlc cmd not implemented"); // TODO: throw instead
+                console.log("vlc cmd not implemented");
         }
     }
 }

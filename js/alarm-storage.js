@@ -5,6 +5,11 @@ export class AlarmStorage {
         this._settings = settings;
     }
 
+    // TODO: add event emitter for changes.
+
+    /**
+     * Reads alarm json from disk.
+     */
     async getAlarms() {
         try {
             const data = await fs.readFile(this._settings.alarmFileRead, {encoding: 'utf8'});
@@ -17,12 +22,18 @@ export class AlarmStorage {
         return {};
     }
 
+    /**
+     * Writes alarm json to disk.
+     */
     async setAlarms(alarmsJson) {
         let jsonstr = JSON.stringify(alarmsJson, undefined, 4);
         // console.log(jsonstr);
         await fs.writeFile(this._settings.alarmFileWrite, jsonstr)
             .then(async () =>
                 await fs.rename(this._settings.alarmFileWrite, this._settings.alarmFileRead));
-        console.log(this._settings.alarmFileRead + " updated");
+
+        if (this._settings.verbose) {
+            console.log(this._settings.alarmFileRead + " updated");
+        }
     }
 }

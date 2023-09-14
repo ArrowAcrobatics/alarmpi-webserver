@@ -8,8 +8,8 @@ export class AlarmScheduler {
      *
      * @param {boolean=false} verbose - Tell if the VLC error stream should be relayed to the current process error stream.
      */
-    constructor(vlcBridge, verbose = false) {
-        this._verbose = verbose;
+    constructor(vlcBridge, settings) {
+        this._settings = settings;
         this._vlc = vlcBridge;
         this._alarmsjobs = [];
         this._activeRunners = [];
@@ -34,7 +34,7 @@ export class AlarmScheduler {
                     this.getCronStr(alarmJson),
                     async () => {
                         // this func is called on the specified times
-                        let runner = new alarmRunner.AlarmRunner(alarmJson, this._vlc, this._verbose)
+                        let runner = new alarmRunner.AlarmRunner(alarmJson, this._vlc, this._settings)
 
                         this._activeRunners.append(runner);
 

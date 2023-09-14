@@ -3,17 +3,24 @@
  * Deals with the button UI and operates the VLC bridge.
  */
 export class AlarmRunner {
-    constructor(alarmSettingsJson, vlcBridge, verbose) {
+    constructor(alarmSettingsJson, vlcBridge, settings) {
         // TODO: add scheduler ref for querying current run status.
-        this._settings = alarmSettingsJson;
+        this._settings = settings;
+        this._alarmConf = alarmSettingsJson;
         this._vlcBridge = vlcBridge;
-        this._verbose = verbose;
     }
 
     async run() {
-        if(this._verbose) {
+        if(this._settings.verbose) {
             console.log("Running an alarm at " + new Date());
         }
+
+        return new Promise((resolve, reject) => {
+            // let timeoutP = sleep(maxAlarmTime).then(() => {this.stop; resolve();}));
+            // buttonUI.on('stopButton', () => {this.stop; resolve();}));
+            // buttonUI.on('snoozeButton' () => { this.snooze();});
+            resolve();
+        });
     }
 
     stop() {

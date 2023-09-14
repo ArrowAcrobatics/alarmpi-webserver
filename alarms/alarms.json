@@ -27,7 +27,7 @@
                 "name": "alarmpi"
             },
             "settings": {
-                "active": true,
+                "active": false,
                 "time": "13:00"
             },
             "days": {
@@ -47,7 +47,7 @@
                 "name": "alarmpi"
             },
             "settings": {
-                "active": false,
+                "active": true,
                 "time": "13:00"
             },
             "days": {

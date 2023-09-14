@@ -6,10 +6,8 @@ import {fileURLToPath} from 'url';
 
 import {AppBackend} from "./js/app-backend.js";
 import {AppSettings} from "./js/app-settings.js";
-import * as utils from "./js/utils.js";
 
 console.log("starting server: " + new Date());
-
 
 // settings & backend
 let settings = new AppSettings(path.dirname(fileURLToPath(import.meta.url)));
