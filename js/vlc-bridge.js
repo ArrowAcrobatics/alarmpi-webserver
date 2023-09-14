@@ -15,6 +15,7 @@ export class VlcBridge {
         this._verbose = verbose;
         this._playlist = new Map();
         this._playlistIndex = 3;
+        this._vlc = null;
     }
 
     /**
@@ -30,16 +31,22 @@ export class VlcBridge {
                 "--no-video-title-show",
                 "-I", "rc"
             ];
-            try {
-                this._vlc = spawn("cvlc", options); // TODO: isn't this supposed to be 'vlc'?
-            }
-            catch (err) {
-                return reject(err);
-            }
-            if (this._verbose) {
-                this._vlc.stderr.on("data", data => process.stderr.write(data));
-            }
-            return resolve();
+
+            this._vlc = spawn("cvlc", options);
+
+            this._vlc.on('spawn', () => {
+                console.info(`VLC spawn success.`);
+
+                if (this._verbose) {
+                    this._vlc.stderr.on("data", data => process.stderr.write(data));
+                }
+                return resolve();
+            });
+
+            this._vlc.on('error', (data) => {
+               this._vlc = null;
+               return reject(data);
+            });
         });
     }
 
@@ -112,7 +119,7 @@ export class VlcBridge {
      */
     async close() {
         await this.exec("quit");
-        this._vlc = undefined;
+        this._vlc = null;
     }
 
     /**
@@ -124,6 +131,9 @@ export class VlcBridge {
         return new Promise((resolve, reject) => {
             if (!command) {
                 return reject("The command parameter must be provided.");
+            }
+            if(!this._vlc) {
+                return reject("VLC is not available");
             }
             this._vlc.stdin.write(`${command}\n`, err => {
                 if (err) reject(err);

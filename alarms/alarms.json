@@ -3,7 +3,7 @@
         {
             "hidden": {
                 "guid": "peepee",
-                "index": 0,
+                "index": 1,
                 "name": "alarmpi"
             },
             "settings": {
@@ -28,6 +28,26 @@
             },
             "settings": {
                 "active": true,
+                "time": "13:00"
+            },
+            "days": {
+                "monday": true,
+                "tuesday": true,
+                "wednesday": true,
+                "thursday": true,
+                "friday": true,
+                "saturday": false,
+                "sunday": false
+            }
+        },
+        {
+            "hidden": {
+                "guid": "peepee",
+                "index": 3,
+                "name": "alarmpi"
+            },
+            "settings": {
+                "active": false,
                 "time": "13:00"
             },
             "days": {
