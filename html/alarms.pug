@@ -15,24 +15,24 @@ html(lang="en")
             .thecontent
                 h1 Alarmpi 0.2
         .d-flex.justify-content-center
-            .d-flex.justify-content-end(style="width: 25em")
-        #alarm-container.d-flex.justify-content-center
-            ul#sortable(style="width: 25em")
-                +vlc_debug_mixin()
-                each alarm in alarms
-                    +alarm_mixin(alarm)
-                button.btn.btn-primary.btn-info.alarmpi-add
-                    i.fas.fa-plus(aria-hidden="true")
+            .d-flex(style="width: 25em")
+                #alarm-container.d-flex.justify-content-center.vstack
+                    ul#sortable(style="width: 25em")
+                        +vlc_debug_mixin()
+                        each alarm in alarms
+                            +alarm_mixin(alarm)
+                    .d-flex.align-items-end.flex-column
+                        button.btn.btn-primary.btn-info.alarmpi-add
+                            i.fas.fa-plus(aria-hidden="true")
         .d-flex.justify-content-center
             .thecontent
                 h3 TODO
                 ul
-                    li python daemon
+                    li cron jobs for alarms
                     li launcher script
                     li gpio buttons
                     li music selection
                     li mobile ready reorderable list
-                    li refresh button front/backend
                     li prettyfi newly added button by bootstrapToggle() call
                     li file write throttle for sd card burn in reduction
 
