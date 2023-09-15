@@ -18,6 +18,26 @@ export class VlcBridge {
         this._vlc = null;
     }
 
+    async execBackendCommand(vlcJson) {
+        // TODO: propagate possible failure to execute
+        switch (vlcJson.cmd) {
+            case "open":
+                await this.open();
+                break;
+            case "close":
+                await this.close();
+                break;
+            case "play":
+                await this.play();
+                break;
+            case "pause":
+                await this.pause();
+                break;
+            default:
+                console.log(`vlc cmd "${vlcJson.cmd}" not implemented`);
+        }
+    }
+
     /**
      * Open the VLC media player with an empty playlist. VLC will not take
      * over the display until the first media is added to the playlist.

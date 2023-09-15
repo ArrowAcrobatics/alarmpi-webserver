@@ -4,6 +4,7 @@ import * as fs from 'node:fs/promises';
 import {VlcBridge} from "./vlc-bridge.js";
 import {AlarmScheduler} from "./alarm-scheduler.js";
 import {AlarmStorage} from "./alarm-storage.js";
+import {GpioHandler} from "./gpio-handler.js";
 
 export class AppBackend {
     constructor(settings) {
@@ -11,6 +12,7 @@ export class AppBackend {
         this.vlcbridge = new VlcBridge(settings);
         this.alarmStorage = new AlarmStorage(settings);
         this.alarmScheduler = new AlarmScheduler(this.vlcbridge, settings);
+        this.gpioHandler = new GpioHandler(settings, null); // TODO: add event emitter.
         this.pugRenderAlarmsPage = null;
     }
 
@@ -101,12 +103,14 @@ export class AppBackend {
         console.log("post request: /gpio from: " + request.headers.host);
         console.log(request.body);
 
-        response.status(200).json({
-            status: "success",
-            timestamp: Date.now(),
-        });
-
-        // TODO: implement stub
+        this.gpioHandler.execBackendCommand(request.body)
+            .then(
+                response.status(200).json({
+                    status: "success",
+                    timestamp: Date.now(),
+                })
+            )
+            .catch(err => console.log("failed to handle gpio command"));
     }
 
     /**
@@ -116,33 +120,13 @@ export class AppBackend {
         console.log("post request: /vlc from: " + request.headers.host);
         console.log(request.body);
 
-        this.execVlcCommand(request.body)
-            .then(() => {
+        this.vlcbridge.execBackendCommand(request.body)
+            .then(
                 response.status(200).json({
                     status: "success",
-                    timestamp: Date.now(),
-                });
-            })
+                    timestamp: Date.now()
+                })
+            )
             .catch(err => console.log("failed to handle vlc command"));
-    }
-
-    async execVlcCommand(vlcJson) {
-        // TODO: propagate possible failure to execute
-        switch (vlcJson.cmd) {
-            case "open":
-                await this.vlcbridge.open();
-                break;
-            case "close":
-                await this.vlcbridge.close();
-                break;
-            case "play":
-                await this.vlcbridge.play();
-                break;
-            case "pause":
-                await this.vlcbridge.pause();
-                break;
-            default:
-                console.log("vlc cmd not implemented");
-        }
     }
 }
