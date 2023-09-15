@@ -16,9 +16,7 @@ export class AlarmScheduler {
     }
 
     reset() {
-        this._alarmsjobs.each((job) => {
-            job.stop();
-        });
+        this._alarmsjobs.forEach((job) => job.stop());
         this._alarmsjobs = [];
         this._activeRunners = [];
     }
@@ -27,11 +25,13 @@ export class AlarmScheduler {
         // clear old garbage
         this.reset();
 
-        alarmListJson.alarms.each(
+        alarmListJson.alarms.forEach(
             (alarmJson) => {
+                let cronstr = this.getCronStr(alarmJson);
+                return;
                 // append new cron job
                 this._alarmsjobs.append(cron.schedule(
-                    this.getCronStr(alarmJson),
+                    cronstr,
                     async () => {
                         // this func is called on the specified times
                         let runner = new alarmRunner.AlarmRunner(alarmJson, this._vlc, this._settings)
@@ -52,7 +52,15 @@ export class AlarmScheduler {
     }
 
     getCronStr(alarmJson) {
-        // TODO: extract the info from the alarm and format the string accordingly.
-        return "* * * * *";
+        let t = alarmJson.settings.time.split(":");
+        let h = t[0];
+        let m = t[1];
+
+        let activedaysstring = obj => Object.entries(obj).map(([k, v]) => {
+            return v ? k : "";
+        }).filter((dayname) => dayname != "").join(',');
+        let d = activedaysstring(alarmJson.days);
+
+        return `${m} ${h} * * ${d}`;
     }
-};
+}
