@@ -17,7 +17,7 @@ export class GpioHandler {
     }
 
     async execBackendCommand(gpioJson) {
-        console.log(`gpio cmd "${gpioJson.cmd}" not implemented`);
+        console.log(`GpioHandler.execBackendCommand: "${gpioJson}"`);
 
         switch(gpioJson.cmd) {
             case "red":

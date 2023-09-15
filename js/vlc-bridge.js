@@ -25,6 +25,7 @@ export class VlcBridge {
     }
 
     async execBackendCommand(vlcJson) {
+        console.log(`VlcBridge.execBackendCommand: "${vlcJson}"`);
         // TODO: propagate possible failure to execute
         switch (vlcJson.cmd) {
             case "open":

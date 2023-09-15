@@ -108,7 +108,6 @@ export class AppBackend {
      */
     async onPostGpioCommand(request, response) {
         console.log("post request: /gpio from: " + request.headers.host);
-        console.log(request.body);
 
         this.gpioHandler.execBackendCommand(request.body)
             .then(
@@ -117,7 +116,9 @@ export class AppBackend {
                     timestamp: Date.now(),
                 })
             )
-            .catch(err => console.log("failed to handle gpio command"));
+            .catch(
+                err => console.log(`failed to handle gpio command: ${err}`)
+            );
     }
 
     /**
@@ -125,7 +126,6 @@ export class AppBackend {
      */
     async onPostVlcCommand(request, response) {
         console.log("post request: /vlc from: " + request.headers.host);
-        console.log(request.body);
 
         this.vlcbridge.execBackendCommand(request.body)
             .then(

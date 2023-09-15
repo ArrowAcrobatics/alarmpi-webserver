@@ -13,7 +13,7 @@ export class AlarmScheduler {
         this._activeRunners = [];
 
         this._events.on('stop', () => this.stop());
-        this._events.on('snooze', () => this.stop());
+        this._events.on('snooze', () => this.snooze());
     }
 
     /**
@@ -28,11 +28,17 @@ export class AlarmScheduler {
 
     snooze() {
         console.log("AlarmScheduler.snooze() called");
+        this._activeRunners.forEach((runner) => {
+           runner.snooze();
+        });
     }
 
     stop() {
         console.log("AlarmScheduler.stop() called");
-        this.reset();
+        // this.reset();
+        this._activeRunners.forEach((runner) => {
+           runner.stop();
+        });
     }
 
     load(alarmListJson){

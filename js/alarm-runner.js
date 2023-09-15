@@ -10,85 +10,69 @@ export class AlarmRunner {
         this._settings = settings;
         this._alarmConf = alarmSettingsJson;
         this._events = appEvents;
+
+        this._snoozeResolved = null;
+        this._stopResolved = null;
+        this._status = null;
     }
 
-    async run() {
-        if(this._settings.verbose) {
-            console.log("Running an alarm at " + new Date());
-            console.log(this._alarmConf);
-        }
-        this._events.emit('alarmpi-start', this._alarmConf);
-
-        return new Promise(async (resolve, reject) => {
-            // TODO: while(restartCounter > 0)
-            let timedOutToken = {isTimedOut: false};
-
-            await Promise.race([
-                this.stopPromise(timedOutToken),
-                this.snoozePromise(timedOutToken),
-                this.timeoutPromise(timedOutToken)
-            ]);
-
-            if (this._settings.verbose) {
-                console.log("alarm done");
-            }
-            this.stop();
-            resolve();
-        });
-    }
-
-    timeoutPromise(timedOutToken) {
-        return new Promise(async (resolve, reject) => {
-            await utils.sleep(5000);
-
-            if(timedOutToken.isTimedOut) {
-                console.log("alarm timed out");
-            }
-            timedOutToken.isTimedOut = true;
-
-            // do actual handling:
-            // remove event handlers.
-
-            return resolve();
-        });
-    }
-
-    stopPromise(timedOutToken) {
-        return new Promise(async (resolve, reject) => {
-            this._events.on('stop', () => {
-               if(timedOutToken.isTimedOut) {
-                  return resolve();
-               }
-               timedOutToken.isTimedOut = true;
-
-               // do actual handling
-                console.log("alarm stopped using button");
-                return resolve();
-            });
-        });
-    }
-
-    snoozePromise(timedOutToken) {
-        return new Promise(async (resolve, reject) => {
-            this._events.on('snooze', () => {
-               if(timedOutToken.isTimedOut) {
-                  return resolve();
-               }
-               timedOutToken.isTimedOut = true;
-
-               // do actual handling
-                console.log("alarm snoozed using button");
-                return resolve();
-            });
-        });
+    snooze(){
+       console.log("alarm snoozed using button");
+       if(this._snoozeResolved) {
+           this._status = "snooze";
+           this._snoozeResolved("snooze");
+       }
     }
 
     stop() {
-        // for other alarms to go solo etc.
-        this._events.emit('alarmpi-stop', this._alarmConf);
+        console.log("AlarmRunner.stop()");
+        if(this._stopResolved) {
+            this._status = "stop";
+            this._stopResolved("stop");
+        }
     }
 
-    snooze() {
-        console.log("snoozed");
+    // _must_ be resolved before reassigning snoozeResolved to prevent memory leaks!
+    async waitForSnooze() {
+        let _this = this;
+        await new Promise((resolved, rejected) => { _this._snoozeResolved = resolved; });
     }
+
+    // _must_ be resolved before reassigning stopResolved to prevent memory leaks!
+    async waitForStop() {
+        let _this = this;
+        await new Promise((resolved, rejected) => { _this._stopResolved = resolved; });
+    }
+
+    async waitForTimeout() {
+        await utils.sleep(10000);
+        return "time-out";
+    }
+
+    async run() {
+        if (this._settings.verbose) {
+            console.log("Running an alarm at " + new Date());
+            console.log(this._alarmConf);
+        }
+
+        this._events.emit('alarmpi-start', this._alarmConf);
+
+        // TODO: while(restartCounter > 0)
+        let cancelToken = {cancelled: false};
+        await Promise.race([
+            this.waitForSnooze(),
+            this.waitForStop(),
+            this.waitForTimeout()
+        ]).then((status) => {
+            console.log(`alarm.run ended because of ${status} (${this._status})`);
+            // resolve other promises
+        });
+
+        if (this._settings.verbose) {
+            console.log("alarm done");
+        }
+
+        this.stop();
+    }
+
 };
