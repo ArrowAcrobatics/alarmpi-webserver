@@ -21,7 +21,7 @@ export class VlcBridge {
 
         this._events.on('alarmpi-start', (alarmsettings) => console.log(`vlc received alarmpi-start: ${alarmsettings}`));
         this._events.on('alarmpi-stop', (alarmsettings) => console.log(`vlc received alarmpi-stop ${alarmsettings}`));
-        this._events.on('snooze', () => console.log("vlc received snooze"));
+        // this._events.on('snooze', () => console.log("vlc received snooze"));
     }
 
     async execBackendCommand(vlcJson) {

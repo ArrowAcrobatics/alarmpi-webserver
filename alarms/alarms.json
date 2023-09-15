@@ -8,7 +8,7 @@
             },
             "settings": {
                 "active": true,
-                "time": "23:26"
+                "time": "00:34"
             },
             "days": {
                 "monday": true,
@@ -27,8 +27,8 @@
                 "name": "alarmpi"
             },
             "settings": {
-                "active": false,
-                "time": "17:40"
+                "active": true,
+                "time": "00:36"
             },
             "days": {
                 "monday": true,
@@ -47,8 +47,8 @@
                 "name": "alarmpi"
             },
             "settings": {
-                "active": false,
-                "time": "17:06"
+                "active": true,
+                "time": "00:35"
             },
             "days": {
                 "monday": true,

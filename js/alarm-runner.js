@@ -1,4 +1,5 @@
 import * as utils from "./utils.js";
+import {Deferred} from "./utils.js";
 
 /**
  * Responsible for a single alarm instance/moment.
@@ -11,68 +12,96 @@ export class AlarmRunner {
         this._alarmConf = alarmSettingsJson;
         this._events = appEvents;
 
-        this._snoozeResolved = null;
-        this._stopResolved = null;
+        this._snoozeDeferred = null;
+        this._stopDeferred = null;
         this._status = null;
     }
 
-    snooze(){
-       console.log("alarm snoozed using button");
-       if(this._snoozeResolved) {
+    snooze(verbose = true){
+       if (verbose) console.log("AlarmRunner.snooze()");
+
+       if(this._snoozeDeferred) {
            this._status = "snooze";
-           this._snoozeResolved("snooze");
+           this._snoozeDeferred.resolve("snooze");
+           this._snoozeDeferred = null;
+       } else {
+           if (verbose) console.log("no snooze deffered scheduled?");
        }
     }
 
-    stop() {
-        console.log("AlarmRunner.stop()");
-        if(this._stopResolved) {
+    stop(verbose = true) {
+        if (verbose) console.log("AlarmRunner.stop()");
+        if(this._stopDeferred) {
             this._status = "stop";
-            this._stopResolved("stop");
+            this._stopDeferred.resolve("stop");
+            this._stopDeferred = null;
+        } else {
+           if (verbose) console.log("no stop deffered scheduled?");
+        }
+    }
+
+    timeout(verbose = true) {
+        if (verbose) console.log("AlarmRunner.timeout()");
+        if(this._timeoutDeferred) {
+            this._status = "stop";
+            this._timeoutDeferred.resolve("timeout");
+            this._timeoutDeferred = null;
+        } else {
+            if (verbose) console.log("no timeout deffered scheduled?");
         }
     }
 
     // _must_ be resolved before reassigning snoozeResolved to prevent memory leaks!
-    async waitForSnooze() {
-        let _this = this;
-        await new Promise((resolved, rejected) => { _this._snoozeResolved = resolved; });
+    async waitForStop() {
+        this._stopDeferred = new utils.Deferred();
+        await this._stopDeferred.promise;
+        return "stop";
     }
 
     // _must_ be resolved before reassigning stopResolved to prevent memory leaks!
-    async waitForStop() {
-        let _this = this;
-        await new Promise((resolved, rejected) => { _this._stopResolved = resolved; });
+    async waitForSnooze() {
+        this._snoozeDefered = new utils.Deferred();
+        await this._snoozeDefered.promise;
+        return "snooze";
     }
 
+    // _must_ be resolved before reassigning stopResolved to prevent memory leaks!
     async waitForTimeout() {
-        await utils.sleep(10000);
+        this._timeoutDeferred = new utils.Deferred((resolve, reject) => {
+            utils.sleep(10000).then(resolve);
+        });
+        await this._timeoutDeferred.promise;
         return "time-out";
     }
-
+    
     async run() {
         if (this._settings.verbose) {
             console.log("Running an alarm at " + new Date());
-            console.log(this._alarmConf);
+            // console.log(this._alarmConf);
         }
 
         this._events.emit('alarmpi-start', this._alarmConf);
 
         // TODO: while(restartCounter > 0)
-        let cancelToken = {cancelled: false};
         await Promise.race([
-            this.waitForSnooze(),
             this.waitForStop(),
+            this.waitForSnooze(),
             this.waitForTimeout()
         ]).then((status) => {
             console.log(`alarm.run ended because of ${status} (${this._status})`);
             // resolve other promises
+            this.stop(false);
+            this.snooze(false);
+            this.timeout(false);
+            console.log("cleared deferred promises.");
         });
 
         if (this._settings.verbose) {
             console.log("alarm done");
         }
 
-        this.stop();
+        // todo: vlc stop.
+        // this.stop();
     }
 
 };

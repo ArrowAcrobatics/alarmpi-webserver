@@ -19,16 +19,18 @@ export function sleep(ms) {
   });
 }
 
-function deferredPromise(handler){
-  let resolve, reject;
-
-  let promise = new Promise(function(_resolve, _reject){
-    resolve = _resolve;
-    reject = _reject;
-    if(handler) handler(resolve, reject);
-  })
-
-  promise.resolve = resolve;
-  promise.reject = reject;
-  return promise;
+export class Deferred {
+    promise;
+    resolve;
+    reject;
+    constructor(handler) {
+        let _this = this;
+        this.promise = new Promise(function (_resolve, _reject) {
+            _this.resolve = _resolve;
+            _this.reject = _reject;
+            if (handler) {
+                handler(_this.resolve, _this.reject);
+            }
+        })
+    }
 }

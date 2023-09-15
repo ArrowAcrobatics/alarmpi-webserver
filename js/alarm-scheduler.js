@@ -83,8 +83,8 @@ export class AlarmScheduler {
 
     getCronStr(alarmJson) {
         let t = alarmJson.settings.time.split(":");
-        let h = t[0].replace(/^0+/, '');
-        let m = t[1].replace(/^0+/, '');
+        let h = t[0].replace(/^0+/, '') || '0';
+        let m = t[1].replace(/^0+/, '') || '0';
 
         const capitalize = (s) => (s[0].toUpperCase() + s.slice(1));
         let activedaysstring = obj => Object.entries(obj).map(([k, v]) => {
