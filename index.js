@@ -24,6 +24,7 @@ app.use(bodyParser.json());
 app.get("/", (req,res) => backend.onGetIndex(req,res));
 app.post("/", (req,res) => backend.onPostAlarm(req,res));
 app.post("/vlc", (req,res) => backend.onPostVlcCommand(req,res));
+app.post("/gpio", (req,res) => backend.onPostGpioCommand(req,res));
 
 // open port
 app.listen(process.env.PORT || 3000, () => {

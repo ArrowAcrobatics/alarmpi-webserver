@@ -1,5 +1,6 @@
 include alarm-mixin
 include vlc-debug-ui
+include alarm-gpio-ui
 
 doctype html
 html(lang="en")
@@ -19,6 +20,7 @@ html(lang="en")
                 #alarm-container.d-flex.justify-content-center.vstack
                     ul#sortable(style="width: 25em")
                         +vlc_debug_mixin()
+                        +gpio_debug_mixin()
                         each alarm in alarms
                             +alarm_mixin(alarm)
                     .d-flex.align-items-end.flex-column

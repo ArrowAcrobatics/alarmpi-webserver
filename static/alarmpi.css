@@ -6,6 +6,28 @@
     background-color: #c68dc0;
 }
 
+.bg-custom-gpio-debug {
+    background-color: #20c997;
+}
+
 .button i {
   pointer-events: none;
+}
+
+.red {
+    /*background-color: #919191;*/
+    background-color: var(--bs-red);
+    color: var(--bs-red);
+}
+
+.black {
+    /*background-color: #919191;*/
+    background-color: var(--bs-black);
+    color: var(--bs-black);
+}
+
+.yellow {
+    /*background-color: #919191;*/
+    background-color: var(--bs-yellow);
+    color: var(--bs-yellow);
 }

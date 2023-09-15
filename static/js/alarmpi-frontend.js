@@ -4,7 +4,6 @@ import {serverUrl} from "./utils.js";
 //import { bootstrapToggle } from "https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js";
 
 
-
 export function InitUI() {
     $(document).on('click','.alarmpi-delete', function(evt) {
         $(evt.target).each(DeleteAlarm);
@@ -18,8 +17,6 @@ export function InitUI() {
          $(evt.target).each(OnInputUpdate);
     });
 }
-
-
 
 /**
  * post alarms json to the server

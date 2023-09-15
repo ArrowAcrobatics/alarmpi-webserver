@@ -17,6 +17,8 @@ export class AppBackend {
     async init() {
         await this.initPug();
         await this.initVlc();
+
+        this.alarmScheduler.load(await this.alarmStorage.getAlarms());
     }
 
     async initVlc() {
@@ -80,6 +82,7 @@ export class AppBackend {
      */
     async onPostAlarm(request, response) {
         console.log("post request: / from: " + request.headers.host);
+        // TODO: validate alarm data format?
         this.alarmStorage.setAlarms(request.body)
             .then(() => {
                 response.status(200).json({
@@ -87,7 +90,23 @@ export class AppBackend {
                     timestamp: Date.now(),
                 });
             })
+            .then( () => this.alarmScheduler.load(request.body))
             .catch(err => console.log("failed setting alarms!"));
+    }
+
+    /**
+     * Post request handler: Emulates a gpio button press
+     */
+    async onPostGpioCommand(request, response) {
+        console.log("post request: /gpio from: " + request.headers.host);
+        console.log(request.body);
+
+        response.status(200).json({
+            status: "success",
+            timestamp: Date.now(),
+        });
+
+        // TODO: implement stub
     }
 
     /**

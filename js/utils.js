@@ -12,3 +12,9 @@ export function bind(obj, memfunc) {
       return memfunc.apply(obj, args.concat(Array.prototype.slice.call(arguments)));
     };
 }
+
+export function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
