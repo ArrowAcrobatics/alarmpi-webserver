@@ -5,24 +5,38 @@ import * as utils from './utils.js';
 export class AlarmScheduler {
     /**
      * Create a new instance of the scheduler.
-     *
-     * @param {boolean=false} verbose - Tell if the VLC error stream should be relayed to the current process error stream.
      */
-    constructor(vlcBridge, settings) {
+    constructor(settings, appEvents) {
         this._settings = settings;
-        this._vlc = vlcBridge;
+        this._events = appEvents;
         this._alarmsjobs = [];
         this._activeRunners = [];
+
+        this._events.on('stop', () => this.stop());
+        this._events.on('snooze', () => this.stop());
     }
 
+    /**
+     * Stop and remove all cron jobs and bring this instance into default state.
+     */
     reset() {
+        console.log("resetting alarm scheduler");
         this._alarmsjobs.forEach((job) => job.stop());
         this._alarmsjobs = [];
         this._activeRunners = [];
     }
 
+    snooze() {
+        console.log("AlarmScheduler.snooze() called");
+    }
+
+    stop() {
+        console.log("AlarmScheduler.stop() called");
+        this.reset();
+    }
+
     load(alarmListJson){
-        // clear old garbage
+        // clear old state
         this.reset();
 
         alarmListJson.alarms.forEach(
@@ -34,7 +48,7 @@ export class AlarmScheduler {
                     cronstr,
                     async () => {
                         // this func is called on the specified times
-                        let runner = new alarmRunner.AlarmRunner(alarmJson, this._vlc, this._settings)
+                        let runner = new alarmRunner.AlarmRunner(this._settings, this._events, alarmJson);
 
                         this._activeRunners.append(runner);
 

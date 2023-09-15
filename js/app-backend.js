@@ -6,14 +6,21 @@ import {AlarmScheduler} from "./alarm-scheduler.js";
 import {AlarmStorage} from "./alarm-storage.js";
 import {GpioHandler} from "./gpio-handler.js";
 
+import { EventEmitter } from 'node:events';
+
+class AppBackendEmitter extends EventEmitter {};
+
 export class AppBackend {
     constructor(settings) {
         this.settings = settings;
-        this.vlcbridge = new VlcBridge(settings);
-        this.alarmStorage = new AlarmStorage(settings);
-        this.alarmScheduler = new AlarmScheduler(this.vlcbridge, settings);
-        this.gpioHandler = new GpioHandler(settings, null); // TODO: add event emitter.
         this.pugRenderAlarmsPage = null;
+
+        this.eventEmitter = new AppBackendEmitter();
+
+        this.alarmScheduler = new AlarmScheduler(settings, this.eventEmitter);
+        this.alarmStorage = new AlarmStorage(settings, this.eventEmitter);
+        this.gpioHandler = new GpioHandler(settings, this.eventEmitter);
+        this.vlcbridge = new VlcBridge(settings, this.eventEmitter);
     }
 
     async init() {

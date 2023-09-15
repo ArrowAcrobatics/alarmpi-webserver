@@ -1,8 +1,9 @@
 import fs from "node:fs/promises";
 
 export class AlarmStorage {
-    constructor(settings) {
+    constructor(settings, appEvents) {
         this._settings = settings;
+        this._events = appEvents;
     }
 
     // TODO: add event emitter for changes.

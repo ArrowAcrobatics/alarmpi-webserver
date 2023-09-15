@@ -11,11 +11,17 @@ export class VlcBridge {
      *
      * @param {boolean=false} verbose - Tell if the VLC error stream should be relayed to the current process error stream.
      */
-    constructor(settings) {
+    constructor(settings, appEvents) {
         this._settings = settings;
+        this._events = appEvents;
+
         this._playlist = new Map();
         this._playlistIndex = 3;
         this._vlc = null;
+
+        this._events.on('alarmpi-start', (alarmsettings) => console.log(`vlc received alarmpi-start: ${alarmsettings}`));
+        this._events.on('alarmpi-stop', (alarmsettings) => console.log(`vlc received alarmpi-stop ${alarmsettings}`));
+        this._events.on('snooze', () => console.log("vlc received snooze"));
     }
 
     async execBackendCommand(vlcJson) {
