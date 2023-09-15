@@ -42,15 +42,23 @@ export class AlarmScheduler {
         alarmListJson.alarms.forEach(
             (alarmJson) => {
                 let cronstr = this.getCronStr(alarmJson);
-                return;
+                console.log(`Adding alarm with cronstr: ${cronstr} (${cron.validate(cronstr)})`);
+
                 // append new cron job
-                this._alarmsjobs.append(cron.schedule(
+                this._alarmsjobs.push(cron.schedule(
                     cronstr,
-                    async () => {
+                    () => new Promise(async (resolve, reject) => {
+                        // scheduler invoked every time, but runner will only be executed when active
+                        if(!alarmJson.active) {
+                            console.log("Scheduler called: alarm not active.");
+                            return resolve();
+                        }
+
+                        console.log("Scheduler called: creating alarm runner.");
                         // this func is called on the specified times
                         let runner = new alarmRunner.AlarmRunner(this._settings, this._events, alarmJson);
 
-                        this._activeRunners.append(runner);
+                        this._activeRunners.push(runner);
 
                         await runner.run()
                             .catch(() => {
@@ -59,7 +67,9 @@ export class AlarmScheduler {
                                 console.log("alarm done, removing from active list");
                                 utils.RemoveFromArray(this._activeRunners,runner);
                         });
-                    }
+
+                        return resolve();
+                    })
                 ));
             }
         );
@@ -67,14 +77,15 @@ export class AlarmScheduler {
 
     getCronStr(alarmJson) {
         let t = alarmJson.settings.time.split(":");
-        let h = t[0];
-        let m = t[1];
+        let h = t[0].replace(/^0+/, '');
+        let m = t[1].replace(/^0+/, '');
 
+        const capitalize = (s) => (s[0].toUpperCase() + s.slice(1));
         let activedaysstring = obj => Object.entries(obj).map(([k, v]) => {
-            return v ? k : "";
+            return v ? capitalize(k) : "";
         }).filter((dayname) => dayname != "").join(',');
-        let d = activedaysstring(alarmJson.days);
+        let d = "*";// activedaysstring(alarmJson.days);
 
-        return `${m} ${h} * * ${d}`;
+        return `0 ${m} ${h} * * ${d}`;
     }
 }
