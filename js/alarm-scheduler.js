@@ -49,7 +49,7 @@ export class AlarmScheduler {
                     cronstr,
                     () => new Promise(async (resolve, reject) => {
                         // scheduler invoked every time, but runner will only be executed when active
-                        if(!alarmJson.active) {
+                        if(!alarmJson.settings.active) {
                             console.log("Scheduler called: alarm not active.");
                             return resolve();
                         }
@@ -84,7 +84,7 @@ export class AlarmScheduler {
         let activedaysstring = obj => Object.entries(obj).map(([k, v]) => {
             return v ? capitalize(k) : "";
         }).filter((dayname) => dayname != "").join(',');
-        let d = "*";// activedaysstring(alarmJson.days);
+        let d = activedaysstring(alarmJson.days);
 
         return `0 ${m} ${h} * * ${d}`;
     }
