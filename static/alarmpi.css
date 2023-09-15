@@ -15,19 +15,25 @@
 }
 
 .red {
-    /*background-color: #919191;*/
-    background-color: var(--bs-red);
     color: var(--bs-red);
 }
 
 .black {
-    /*background-color: #919191;*/
-    background-color: var(--bs-black);
     color: var(--bs-black);
 }
 
 .yellow {
-    /*background-color: #919191;*/
-    background-color: var(--bs-yellow);
     color: var(--bs-yellow);
+}
+
+.red-bg {
+    background-color: var(--bs-red);
+}
+
+.black-bg {
+    background-color: var(--bs-black);
+}
+
+.yellow-bg {
+    background-color: var(--bs-yellow);
 }
