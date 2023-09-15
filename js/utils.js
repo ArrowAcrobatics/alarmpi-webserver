@@ -20,9 +20,9 @@ export function sleep(ms) {
 }
 
 export class Deferred {
-    promise;
-    resolve;
-    reject;
+    // promise;
+    // resolve;
+    // reject;
     constructor(handler) {
         let _this = this;
         this.promise = new Promise(function (_resolve, _reject) {

@@ -59,7 +59,7 @@ export class AlarmScheduler {
                             console.log("Scheduler called: alarm not active.");
                             return resolve();
                         }
-
+                        console.log("--------------");
                         console.log("Scheduler called: creating alarm runner.");
                         // this func is called on the specified times
                         let runner = new alarmRunner.AlarmRunner(this._settings, this._events, alarmJson);
@@ -67,8 +67,8 @@ export class AlarmScheduler {
                         this._activeRunners.push(runner);
 
                         await runner.run()
-                            .catch(() => {
-                                console.log("alarm had an exception.");
+                            .catch((e) => {
+                                console.log(`alarm had an exception: ${e}`);
                             }).finally(() => {
                                 console.log("alarm done, removing from active list");
                                 utils.RemoveFromArray(this._activeRunners,runner);
