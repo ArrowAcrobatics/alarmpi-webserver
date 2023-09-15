@@ -20,12 +20,14 @@ export class AlarmRunner {
         this._events.emit('alarmpi-start', this._alarmConf);
 
         return new Promise(async (resolve, reject) => {
-            // let timeoutP = sleep(maxAlarmTime).then(() => {this.stop; resolve();}));
-            // buttonUI.on('stopButton', () => {this.stop; resolve();}));
-            // buttonUI.on('snoozeButton' () => { this.snooze();});
-            // Use Promise.race(sleep, snooze, stop)?
+            // TODO: while(restartCounter > 0)
+            let timedOutToken = {isTimedOut: false};
 
-            await utils.sleep(1000); // debug
+            await Promise.race([
+                this.stopPromise(timedOutToken),
+                this.snoozePromise(timedOutToken),
+                this.timeoutPromise(timedOutToken)
+            ]);
 
             if (this._settings.verbose) {
                 console.log("alarm done");
@@ -35,8 +37,58 @@ export class AlarmRunner {
         });
     }
 
+    timeoutPromise(timedOutToken) {
+        return new Promise(async (resolve, reject) => {
+            await utils.sleep(5000);
+
+            if(timedOutToken.isTimedOut) {
+                console.log("alarm timed out");
+            }
+            timedOutToken.isTimedOut = true;
+
+            // do actual handling:
+            // remove event handlers.
+
+            return resolve();
+        });
+    }
+
+    stopPromise(timedOutToken) {
+        return new Promise(async (resolve, reject) => {
+            this._events.on('stop', () => {
+               if(timedOutToken.isTimedOut) {
+                  return resolve();
+               }
+               timedOutToken.isTimedOut = true;
+
+               // do actual handling
+                console.log("alarm stopped using button");
+                return resolve();
+            });
+        });
+    }
+
+    snoozePromise(timedOutToken) {
+        return new Promise(async (resolve, reject) => {
+            this._events.on('snooze', () => {
+               if(timedOutToken.isTimedOut) {
+                  return resolve();
+               }
+               timedOutToken.isTimedOut = true;
+
+               // do actual handling
+                console.log("alarm snoozed using button");
+                return resolve();
+            });
+        });
+    }
+
     stop() {
         // for other alarms to go solo etc.
         this._events.emit('alarmpi-stop', this._alarmConf);
+    }
+
+    snooze() {
+        console.log("snoozed");
     }
 };

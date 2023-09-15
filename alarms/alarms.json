@@ -7,8 +7,8 @@
                 "name": "alarmpi"
             },
             "settings": {
-                "active": true,
-                "time": "13:00"
+                "active": false,
+                "time": "17:06"
             },
             "days": {
                 "monday": true,
@@ -16,8 +16,8 @@
                 "wednesday": true,
                 "thursday": true,
                 "friday": true,
-                "saturday": false,
-                "sunday": false
+                "saturday": true,
+                "sunday": true
             }
         },
         {
@@ -28,7 +28,7 @@
             },
             "settings": {
                 "active": true,
-                "time": "13:00"
+                "time": "17:40"
             },
             "days": {
                 "monday": true,
@@ -36,8 +36,8 @@
                 "wednesday": true,
                 "thursday": true,
                 "friday": true,
-                "saturday": false,
-                "sunday": false
+                "saturday": true,
+                "sunday": true
             }
         },
         {
@@ -47,17 +47,17 @@
                 "name": "alarmpi"
             },
             "settings": {
-                "active": true,
-                "time": "13:00"
+                "active": false,
+                "time": "17:06"
             },
             "days": {
                 "monday": true,
-                "tuesday": false,
-                "wednesday": false,
-                "thursday": false,
+                "tuesday": true,
+                "wednesday": true,
+                "thursday": true,
                 "friday": true,
-                "saturday": false,
-                "sunday": false
+                "saturday": true,
+                "sunday": true
             }
         }
     ]
