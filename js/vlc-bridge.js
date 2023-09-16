@@ -25,7 +25,7 @@ export class VlcBridge {
         });
         this._events.on('alarmpi-stop', async (alarmsettings) => {
             console.log(`vlc received alarmpi-stop ${alarmsettings}`)
-            await this.pause().catch(e => console.log(`Vlc failed alarm-stop: ${e}`));
+            await this.stop().catch(e => console.log(`Vlc failed alarm-stop: ${e}`));
         });
     }
 
@@ -45,6 +45,8 @@ export class VlcBridge {
             case "pause":
                 await this.pause();
                 break;
+            case "stop":
+                await this.stop();
             default:
                 console.log(`vlc cmd "${vlcJson.cmd}" not implemented`);
         }
@@ -146,6 +148,10 @@ export class VlcBridge {
         await this.exec(`loop ${mode}`);
     }
 
+    async stop() {
+        await this.exec("stop");
+    }
+
     /**
      * Terminate the VLC process.
      */
@@ -173,6 +179,8 @@ export class VlcBridge {
             });
         });
     }
+
+
 }
 
 function _onoff(value) {
