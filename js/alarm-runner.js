@@ -93,6 +93,8 @@ export class AlarmRunner {
             // TODO: handle cases per status.
         });
 
+        this._events.emit('alarmpi-stop', this._alarmConf);
+
         if (this._settings.verbose) {
             console.log("alarm done");
         }

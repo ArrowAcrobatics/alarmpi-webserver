@@ -19,9 +19,14 @@ export class VlcBridge {
         this._playlistIndex = 3;
         this._vlc = null;
 
-        this._events.on('alarmpi-start', (alarmsettings) => console.log(`vlc received alarmpi-start: ${alarmsettings}`));
-        this._events.on('alarmpi-stop', (alarmsettings) => console.log(`vlc received alarmpi-stop ${alarmsettings}`));
-        // this._events.on('snooze', () => console.log("vlc received snooze"));
+        this._events.on('alarmpi-start', async (alarmsettings) => {
+            console.log(`vlc received alarmpi-start: ${alarmsettings}`)
+            await this.play().catch(e => console.log(`Vlc failed alarm-start: ${e}`));
+        });
+        this._events.on('alarmpi-stop', async (alarmsettings) => {
+            console.log(`vlc received alarmpi-stop ${alarmsettings}`)
+            await this.pause().catch(e => console.log(`Vlc failed alarm-stop: ${e}`));
+        });
     }
 
     async execBackendCommand(vlcJson) {
