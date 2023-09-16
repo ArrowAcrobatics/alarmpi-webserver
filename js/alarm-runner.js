@@ -20,6 +20,8 @@ export class AlarmRunner {
         this._STATUS_SNOOZE = "snooze";
         this._STATUS_TIMEOUT = "timeout";
         this._RESTART_COUNT = 4;
+        this._SNOOZE_COUNT = 3; // max amount of consecutive snoozes.
+        this._SNOOZETIME_MS = 30*1000; // TODO: move to settings
     }
 
     snooze(verbose = true){
@@ -77,13 +79,20 @@ export class AlarmRunner {
     async run() {
         console.log(`Started running an alarm at: ${new Date()}`);
 
-        for(let restartCounter = this._RESTART_COUNT; restartCounter> 0; restartCounter--) {
+        let snoozeNextIteration = false;
+        let snoozeCounter = this._SNOOZE_COUNT;
+
+        for(let restartCounter = this._RESTART_COUNT; restartCounter> 0; ) {
             if (this._settings.verbose) {
-                console.log(`Restarts left: ${this._RESTART_COUNT - restartCounter}`);
+                console.log(`Restarts left: ${this._RESTART_COUNT}. Snoozes left: ${snoozeCounter}.`);
                 // console.log(this._alarmConf);
             }
 
-            this._events.emit('alarmpi-start', this._alarmConf);
+            if(!snoozeNextIteration) {
+                this._events.emit('alarmpi-start', this._alarmConf);
+                snoozeCounter = this._SNOOZE_COUNT;
+                restartCounter--;
+            }
 
             this.createDeferredPromises();
             await Promise.race([
@@ -94,11 +103,29 @@ export class AlarmRunner {
                 this.resetDeferredPromises();
                 console.log(`AlarmRunner.run() loop status <<${status}>>`);
 
-                if(status == this._STATUS_STOP) {
-                    restartCounter = 0;
+                switch(status) {
+                    case this._STATUS_TIMEOUT:
+                        snoozeNextIteration = !snoozeNextIteration;
+                        break;
+                    case this._STATUS_SNOOZE:
+                        if (snoozeCounter > 0) {
+                            snoozeNextIteration = true;
+                            // TODO: fire alarm snoozed one-shot?
+                        } else {
+                            snoozeNextIteration = false;
+                            console.log("Too many snoozes, deal with it.");
+                            // TODO: fire alarm not snoozed one-shot?
+                        }
+
+                        snoozeCounter--;
+                        break;
+                    case this._STATUS_STOP:
+                        restartCounter = 0;
+                        break;
                 }
             });
 
+            // extra stop event won't hurt. It's more clear at end of loop than in the then().
             this._events.emit('alarmpi-stop', this._alarmConf);
 
         }
