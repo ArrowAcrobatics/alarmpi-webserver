@@ -85,7 +85,7 @@ export class AlarmRunner {
         for(let restartCounter = this._RESTART_COUNT; restartCounter> 0; ) {
             if (this._settings.verbose) {
                 console.log("+++++++++++++++++++");
-                console.log(`Restarts left: ${this._RESTART_COUNT}. Snoozes left: ${snoozeCounter}.`);
+                console.log(`Restarts left: ${restartCounter}. Snoozes left: ${snoozeCounter}.`);
                 // console.log(this._alarmConf);
             }
 
