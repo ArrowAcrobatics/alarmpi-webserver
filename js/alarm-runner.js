@@ -84,11 +84,13 @@ export class AlarmRunner {
 
         for(let restartCounter = this._RESTART_COUNT; restartCounter> 0; ) {
             if (this._settings.verbose) {
+                console.log("+++++++++++++++++++");
                 console.log(`Restarts left: ${this._RESTART_COUNT}. Snoozes left: ${snoozeCounter}.`);
                 // console.log(this._alarmConf);
             }
 
             if(!snoozeNextIteration) {
+                console.log("AlarmRunner.run activating sound.");
                 this._events.emit('alarmpi-start', this._alarmConf);
                 snoozeCounter = this._SNOOZE_COUNT;
                 restartCounter--;
