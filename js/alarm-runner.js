@@ -15,6 +15,11 @@ export class AlarmRunner {
         this._snoozeDeferred = null;
         this._stopDeferred = null;
         this._timeoutDeferred = null;
+
+        this._STATUS_STOP = "stop";
+        this._STATUS_SNOOZE = "snooze";
+        this._STATUS_TIMEOUT = "timeout";
+        this._RESTART_COUNT = 4;
     }
 
     snooze(verbose = true){
@@ -41,29 +46,26 @@ export class AlarmRunner {
 
     async waitForStop() {
         await this._stopDeferred.promise;
-        return "stop";
+        return this._STATUS_STOP;
     }
 
     async waitForSnooze() {
         await this._snoozeDeferred.promise;
-        return "snooze";
+        return this._STATUS_SNOOZE;
     }
 
     async waitForTimeout() {
         await this._timeoutDeferred.promise;
-        return "time-out";
+        return this._STATUS_TIMEOUT;
     }
 
     // _must_ be reset before reassigning stopResolved to prevent memory leaks!
     createDeferredPromises() {
-        // console.log(`AlarmRunning.createDeferredPromises()`);
-        // console.log(`Before: snooze: ${this._snoozeDeferred != null}, stop: ${this._stopDeferred != null}, timeout: ${this._timeoutDeferred != null}`);
         this._snoozeDeferred = new utils.Deferred();
         this._stopDeferred = new utils.Deferred();
         this._timeoutDeferred = new utils.Deferred((resolve, reject) => {
             utils.sleep(10000).then(resolve);
         });
-        // console.log(`Afterwards: snooze: ${this._snoozeDeferred != null}, stop: ${this._stopDeferred != null}, timeout: ${this._timeoutDeferred != null}`);
     }
 
     resetDeferredPromises() {
@@ -72,35 +74,38 @@ export class AlarmRunner {
         this.timeout(false);
     }
 
-
     async run() {
-        if (this._settings.verbose) {
-            console.log("Running an alarm at " + new Date());
-            // console.log(this._alarmConf);
+        console.log(`Started running an alarm at: ${new Date()}`);
+
+        for(let restartCounter = this._RESTART_COUNT; restartCounter> 0; restartCounter--) {
+            if (this._settings.verbose) {
+                console.log(`Restarts left: ${this._RESTART_COUNT - restartCounter}`);
+                // console.log(this._alarmConf);
+            }
+
+            this._events.emit('alarmpi-start', this._alarmConf);
+
+            this.createDeferredPromises();
+            await Promise.race([
+                this.waitForStop(),
+                this.waitForSnooze(),
+                this.waitForTimeout()
+            ]).then((status) => {
+                this.resetDeferredPromises();
+                console.log(`AlarmRunner.run() loop status <<${status}>>`);
+
+                if(status == this._STATUS_STOP) {
+                    restartCounter = 0;
+                }
+            });
+
+            this._events.emit('alarmpi-stop', this._alarmConf);
+
         }
 
-        this._events.emit('alarmpi-start', this._alarmConf);
-
-        // TODO: while(restartCounter > 0)
-        this.createDeferredPromises();
-        await Promise.race([
-            this.waitForStop(),
-            this.waitForSnooze(),
-            this.waitForTimeout()
-        ]).then((status) => {
-            this.resetDeferredPromises();
-            console.log(`alarm.run ended because of ${status}`);
-            // TODO: handle cases per status.
-        });
-
-        this._events.emit('alarmpi-stop', this._alarmConf);
-
         if (this._settings.verbose) {
-            console.log("alarm done");
+            console.log("AlarmRunner.run() done");
         }
-
-        // todo: vlc stop.
-        // this.stop();
     }
 
 }
