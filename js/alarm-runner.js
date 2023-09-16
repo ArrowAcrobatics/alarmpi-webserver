@@ -18,45 +18,26 @@ export class AlarmRunner {
     }
 
     snooze(verbose = true){
-       if (verbose) console.log("AlarmRunner.snooze()");
-
-       if(this._snoozeDeferred) {
-           this._snoozeDeferred.resolve("snooze");
-           this._snoozeDeferred = null;
-       } else {
-           if (verbose) console.log("AlarmRunner.snooze() called but no snooze deffered scheduled?");
-       }
+       this.deferBoilerplate("_snoozeDeferred", verbose);
     }
 
     stop(verbose = true) {
-        if (verbose) console.log("AlarmRunner.stop()");
-        if(this._stopDeferred) {
-            this._stopDeferred.resolve("stop");
-            this._stopDeferred = null;
-        } else {
-           if (verbose) console.log("AlarmRunner.stop() called but no stop deffered scheduled?");
-        }
+        this.deferBoilerplate("_stopDeferred", verbose);
     }
 
     timeout(verbose = true) {
-        if (verbose) console.log("AlarmRunner.timeout()");
-        if(this._timeoutDeferred) {
-            this._timeoutDeferred.resolve("timeout");
-            this._timeoutDeferred = null;
-        } else {
-            if (verbose) console.log("AlarmRunner.timeout() called but no timeout deffered scheduled?");
-        }
+        this.deferBoilerplate("_timeoutDeferred", verbose);
     }
 
-    // deferBoilerplate(defer, status, verbose) {
-    //     if (verbose) console.log("AlarmRunner.timeout()");
-    //     if(this._timeoutDeferred) {
-    //         this._timeoutDeferred.resolve("timeout");
-    //         this._timeoutDeferred = null;
-    //     } else {
-    //         if (verbose) console.log("AlarmRunner.timeout() called but no timeout deffered scheduled?");
-    //     }
-    // }
+    deferBoilerplate(defer, verbose) {
+        if (verbose) console.log("AlarmRunner.timeout()");
+        if(this[defer]) {
+            this[defer].resolve();
+            this[defer] = null;
+        } else {
+            if (verbose) console.log(`AlarmRunner.${defer}() called but its deferred is null?`);
+        }
+    }
 
     async waitForStop() {
         await this._stopDeferred.promise;
