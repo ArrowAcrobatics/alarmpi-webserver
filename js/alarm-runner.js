@@ -37,8 +37,8 @@ export class AlarmRunner {
     }
 
     deferBoilerplate(defer, verbose) {
-        if (verbose) console.log("AlarmRunner.timeout()");
         if(this[defer]) {
+            if (verbose) console.log(`AlarmRunner.${defer}.resolve()`);
             this[defer].resolve();
             this[defer] = null;
         } else {
