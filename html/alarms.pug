@@ -24,15 +24,17 @@ html(lang="en")
                         each alarm in alarms
                             +alarm_mixin(alarm)
                     .d-flex.align-items-end.flex-column
-                        button.btn.btn-primary.btn-info.alarmpi-add
-                            i.fas.fa-plus(aria-hidden="true")
+                        .d-flex.btn-group
+                            button.btn.btn-primary.btn-info.alarmpi-add
+                                i.fas.fa-plus(aria-hidden="true")
+                            button.btn.btn-primary.btn-info.alarmpi-save
+                                i.fas.fa-save(aria-hidden="true")
         .d-flex.justify-content-center
             .thecontent
                 h3 TODO
                 ul
                     li auto launch on pi
                     li gpio buttons
-                    li save button
                     li mobile ready reorderable list
                     li music selection
                     li mode selection (for I-0-II switch)

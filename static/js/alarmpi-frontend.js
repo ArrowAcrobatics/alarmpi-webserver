@@ -1,4 +1,5 @@
 import * as alarmWidget from "./gen/alarm-client.js";
+import * as alarmpi from "./alarmpi-frontend.js";
 import {serverUrl} from "./utils.js";
 
 //import { bootstrapToggle } from "https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js";
@@ -13,15 +14,19 @@ export function InitUI() {
        $(evt.target).each(AddAlarm);
     });
 
+    $(document).on('click','.alarmpi-save', function(evt) {
+       $(evt.target).each(saveAllToServer);
+    });
+
     $(document).on('input change', 'input',function(evt){
          $(evt.target).each(OnInputUpdate);
     });
 }
 
 /**
- * post alarms json to the server
+ * Send post request to save all alarms.json to the server
  */
-export function postAlarms() {
+export function saveAllToServer() {
     fetch( serverUrl(), {
         method: 'POST',
         headers: {

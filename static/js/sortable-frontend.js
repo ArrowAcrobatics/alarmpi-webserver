@@ -15,8 +15,5 @@ export function InitUI() {
 
     $('#sortable').on("sortupdate", function( event, ui ) {
         console.log("sorting updated");
-        // TODO: update values of index fields.
-        // TODO: send post request
-        alarmpi.postAlarms();
     });
 }
