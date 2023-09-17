@@ -27,6 +27,9 @@ export class VlcBridge {
             console.log(`vlc received alarmpi-stop ${alarmsettings}`)
             await this.stop().catch(e => console.log(`Vlc failed alarm-stop: ${e}`));
         });
+
+        this._isShuffled = false;
+        this._isPlaying = false;
     }
 
     async execBackendCommand(vlcJson) {
@@ -47,6 +50,12 @@ export class VlcBridge {
                 break;
             case "stop":
                 await this.stop();
+            case "togglePlay":
+                await this.setPlayPause(!this._isPlaying);
+                break;
+            case "toggleShuffle":
+                await this.setShuffle(!this._isShuffled);
+                break;
             default:
                 console.log(`vlc cmd "${vlcJson.cmd}" not implemented`);
         }
@@ -102,6 +111,7 @@ export class VlcBridge {
             let index = this._playlist.get(mediaPath);
             await this.exec(`goto ${index}`);
         }
+        this._isPlaying = true;
     }
 
     /**
@@ -109,6 +119,15 @@ export class VlcBridge {
      */
     async pause() {
         await this.exec("pause");
+        this._isPlaying = false;
+    }
+
+    async setPlayPause(value) {
+        if(value) {
+            await this.play();
+        } else {
+            await this.pause();
+        }
     }
 
     /**
@@ -147,6 +166,13 @@ export class VlcBridge {
         let mode = _onoff(value);
         await this.exec(`loop ${mode}`);
     }
+
+    async setShuffle(value = true) {
+        let mode = _onoff(value);
+        await this.exec(`random ${mode}`);
+        this._isShuffled = value;
+    }
+
 
     async stop() {
         await this.exec("stop");

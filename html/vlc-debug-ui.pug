@@ -1,17 +1,14 @@
 mixin vlc_debug_mixin()
     li
-        .alarmpi-vlc-debug.card.bg-custom-vlc-debug
+        .alarmpi-vlc-debug.card.bg-custom-widget-panel
             .card-body
                 #vlc-ui-button-row.form-group.row.d-flex.justify-content-around
                     .col-auto
-                        #vlc-open.button.btn.btn-primary.alarmpi-vlc-ui.bg-custom-light-dark
-                            i.fas.fa-record-vinyl(aria-hidden="true")
+                        #vlc-toggleShuffle.button.btn.btn-primary.alarmpi-vlc-ui.bg-custom-light-dark
+                            i.fas.fa-shuffle(aria-hidden="true")
                     .col-auto
-                        #vlc-play.button.btn.btn-primary.alarmpi-vlc-ui.bg-custom-light-dark
+                        #vlc-togglePlay.button.btn.btn-primary.alarmpi-vlc-ui.bg-custom-light-dark
                             i.fas.fa-play(aria-hidden="true")
                     .col-auto
-                        #vlc-pause.button.btn.btn-primary.alarmpi-vlc-ui.bg-custom-light-dark
-                            i.fas.fa-pause(aria-hidden="true")
-                    .col-auto
-                        #vlc-close.button.btn.btn-primary.alarmpi-vlc-ui.bg-custom-light-dark
+                        #vlc-stop.button.btn.btn-primary.alarmpi-vlc-ui.bg-custom-light-dark
                             i.fas.fa-stop(aria-hidden="true")
