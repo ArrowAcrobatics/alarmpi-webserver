@@ -1,40 +1,41 @@
 mixin alarm_mixin(alarmvar)
     li
         .alarmpi.card.bg-custom-light
-            .card-body
-                #hidden.alarmpi-data.visually-hidden
-                    input#guid.form-control(type="text", value=alarmvar.hidden.guid)
-                    input#index.form-control(type="text", value=alarmvar.hidden.index)
-                    input#name.form-control(type="text", value=alarmvar.hidden.name)
-                //#name-row.form-group.row.d-flex.justify-content-around
-                //    p= alarmvar.hidden.name
-                #settings.alarmpi-data.form-group.row.d-flex.justify-content-around
-                    .col-auto
-                        input#active(type="checkbox", data-toggle="toggle", checked=alarmvar.settings.active, data-onstyle="success", data-offstyle="outline-secondary")
-                    .col-auto
-                        input#time.form-control(type="time", value=alarmvar.settings.time)
-                    .col-auto
-                        button.btn.btn-primary.btn-danger.alarmpi-delete
-                            i.fas.fa-trash-alt(aria-hidden="true")
-                #days.alarmpi-data.form-group.row.d-flex.justify-content-around
-                    .form-check.col-auto.mt-2
-                        label.form-check-label(for="inlineCheckbox0") M
-                        input#monday.form-check-input.day(type="checkbox", checked=alarmvar.days.monday)
-                    .form-check.col-auto.mt-2
-                        label.form-check-label(for="inlineCheckbox1") D
-                        input#tuesday.form-check-input.day(type="checkbox", checked=alarmvar.days.tuesday)
-                    .form-check.col-auto.mt-2
-                        label.form-check-label(for="inlineCheckbox2") W
-                        input#wednesday.form-check-input.day(type="checkbox", checked=alarmvar.days.wednesday)
-                    .form-check.col-auto.mt-2
-                        label.form-check-label(for="inlineCheckbox3") D
-                        input#thursday.form-check-input.day(type="checkbox", checked=alarmvar.days.thursday)
-                    .form-check.col-auto.mt-2
-                        label.form-check-label(for="inlineCheckbox4") V
-                        input#friday.form-check-input.day(type="checkbox", checked=alarmvar.days.friday)
-                    .form-check.col-auto.mt-2
-                        label.form-check-label(for="inlineCheckbox5") Z
-                        input#saturday.form-check-input.day(type="checkbox", checked=alarmvar.days.saturday)
-                    .form-check.col-auto.mt-2
-                        label.form-check-label(for="inlineCheckbox6") Z
-                        input#sunday.form-check-input.day(type="checkbox", checked=alarmvar.days.sunday)
+            .card-body.row.no-gutters
+                .alarmpi-widget.col.no-padding-r
+                    #hidden.alarmpi-data.visually-hidden
+                        input#guid.form-control(type="text", value=alarmvar.hidden.guid)
+                        input#index.form-control(type="text", value=alarmvar.hidden.index)
+                        input#name.form-control(type="text", value=alarmvar.hidden.name)
+                    #settings.alarmpi-data.form-group.row.d-flex.justify-content-around
+                        .col-auto
+                            input#active(type="checkbox", data-toggle="toggle", checked=alarmvar.settings.active, data-onstyle="success", data-offstyle="outline-secondary")
+                        .col-auto
+                            input#time.form-control(type="time", value=alarmvar.settings.time)
+                        .col-auto
+                            button.btn.btn-primary.btn-danger.alarmpi-delete
+                                i.fas.fa-trash-alt(aria-hidden="true")
+                    #days.alarmpi-data.form-group.row.d-flex.justify-content-around
+                        .form-check.col-auto.mt-2
+                            label.form-check-label(for="inlineCheckbox0") M
+                            input#monday.form-check-input.day(type="checkbox", checked=alarmvar.days.monday)
+                        .form-check.col-auto.mt-2
+                            label.form-check-label(for="inlineCheckbox1") D
+                            input#tuesday.form-check-input.day(type="checkbox", checked=alarmvar.days.tuesday)
+                        .form-check.col-auto.mt-2
+                            label.form-check-label(for="inlineCheckbox2") W
+                            input#wednesday.form-check-input.day(type="checkbox", checked=alarmvar.days.wednesday)
+                        .form-check.col-auto.mt-2
+                            label.form-check-label(for="inlineCheckbox3") D
+                            input#thursday.form-check-input.day(type="checkbox", checked=alarmvar.days.thursday)
+                        .form-check.col-auto.mt-2
+                            label.form-check-label(for="inlineCheckbox4") V
+                            input#friday.form-check-input.day(type="checkbox", checked=alarmvar.days.friday)
+                        .form-check.col-auto.mt-2
+                            label.form-check-label(for="inlineCheckbox5") Z
+                            input#saturday.form-check-input.day(type="checkbox", checked=alarmvar.days.saturday)
+                        .form-check.col-auto.mt-2
+                            label.form-check-label(for="inlineCheckbox6") Z
+                            input#sunday.form-check-input.day(type="checkbox", checked=alarmvar.days.sunday)
+                .alarmpi-ui-handle.col-auto
+                    .my-sortable-handle

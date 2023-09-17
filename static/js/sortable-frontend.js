@@ -4,7 +4,8 @@ export function InitUI() {
     $( "#sortable" ).sortable({
         axis: "y",
         // delay: 150,
-        distance: 8
+        distance: 8,
+        handle: ".alarmpi-ui-handle"
     });
     // TODO: add handle icon for mobile friendliness.
     // other option: https://sortablejs.github.io/Sortable/

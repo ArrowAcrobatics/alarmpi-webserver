@@ -2,6 +2,11 @@
     background-color: #6faabc;
 }
 
+.bg-custom-light-dark {
+    background-color: #60829c;
+    border-color: #60829c;
+}
+
 .bg-custom-vlc-debug {
     background-color: #c68dc0;
 }

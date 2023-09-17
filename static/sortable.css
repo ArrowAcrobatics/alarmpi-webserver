@@ -17,3 +17,8 @@
     position: absolute;
     margin-left: -1.3em;
 }
+
+.custom-card-style {
+    border-radius: var(--bs-card-inner-border-radius);
+    padding: 0;
+}
