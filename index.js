@@ -20,25 +20,37 @@ let backend = new AppBackend(settings);
 await backend.init();
 
 // gpio
-let buttons = new Map();
-[0, 2, 3, 5, 6].forEach((gpiopinid) => {
-    buttons.set(`pin_id#${gpiopinid}`, new Gpio(gpiopinid, 'in', 'both', {debounceTimeout: 10}));
-});
-
-buttons.forEach((button, name, map) => {
-    console.log(`adding watch for ${name}`);
-    button.watch((err, value) => {
-        console.log(`button ${name} callback called: ${value}`);
-        if (err) {
-            throw err;
-        }
+let buttons;
+if(Gpio.accessible) {
+    buttons = new Map();
+    [0, 2, 3, 5, 6].forEach((gpiopinid) => {
+        buttons.set(`pin_id#${gpiopinid}`, new Gpio(gpiopinid, 'in', 'both', {debounceTimeout: 10}));
     });
-});
 
-process.on('SIGINT', _ => {
-    console.log("deregister buttons.");
-    buttons.forEach((button, name, map) => button.unexport());
-});
+    buttons.forEach((button, name, map) => {
+        console.log(`adding watch for ${name}`);
+        button.watch((err, value) => {
+            console.log(`button ${name} callback called: ${value}`);
+            if (err) {
+                console.log(`error watching: ${e}`);
+                throw err;
+            }
+        });
+    });
+
+    process.on('SIGINT', _ => {
+        console.log("deregister buttons.");
+        buttons.forEach((button, name, map) => {
+            try {
+                button.unexport();
+            } catch (e) {
+                console.log(`Error deregistering; ${e}`);
+            }
+        });
+    });
+} else {
+    console.log("No GPIO accessible");
+}
 
 // init express app
 const app = express();
