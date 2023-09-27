@@ -22,15 +22,16 @@ await backend.init();
 // gpio
 let buttons = new Map();
 [0, 2, 3, 5, 6].forEach((gpiopinid) => {
-    buttons.set("red", new Gpio(gpiopinid, 'in', 'both', {debounceTimeout: 10}));
+    buttons.set(`pin_id#${gpiopinid}`, new Gpio(gpiopinid, 'in', 'both', {debounceTimeout: 10}));
 });
 
 buttons.forEach((button, name, map) => {
+    console.log(`adding watch for ${name}`);
     button.watch((err, value) => {
+        console.log(`button ${name} callback called: ${value}`);
         if (err) {
             throw err;
         }
-        console.log(`button ${name} callback called: ${value}`);
     });
 });
 
