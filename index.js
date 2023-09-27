@@ -1,6 +1,8 @@
 import express from 'express';
 import bodyParser from "body-parser";
 
+import {Gpio} from 'onoff';
+
 import * as path from 'path';
 import {fileURLToPath} from 'url';
 
@@ -8,11 +10,34 @@ import {AppBackend} from "./js/app-backend.js";
 import {AppSettings} from "./js/app-settings.js";
 
 console.log("starting server: " + new Date());
+// TODO: automate relaunching on crash/boot with:
+// https://dev.to/bogdaaamn/run-your-nodejs-application-on-a-headless-raspberry-pi-4jnn
+// https://github.com/Unitech/pm2
 
 // settings & backend
 let settings = new AppSettings(path.dirname(fileURLToPath(import.meta.url)));
 let backend = new AppBackend(settings);
 await backend.init();
+
+// gpio
+let buttons = new Map();
+[0, 2, 3, 5, 6].forEach((gpiopinid) => {
+    buttons.set("red", new Gpio(gpiopinid, 'in', 'both', {debounceTimeout: 10}));
+});
+
+buttons.forEach((button, name, map) => {
+    button.watch((err, value) => {
+        if (err) {
+            throw err;
+        }
+        console.log(`button ${name} callback called: ${value}`);
+    });
+});
+
+process.on('SIGINT', _ => {
+    console.log("deregister buttons.");
+    buttons.forEach((button, name, map) => button.unexport());
+});
 
 // init express app
 const app = express();
