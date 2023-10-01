@@ -106,9 +106,10 @@ export class AlarmRunner {
             let promislist= [];
             promislist.push(this.waitForStop());
             promislist.push(this.waitForTimeout());
-            if (restartsLeft > 1) {
-                // no snooze on the last iteration
+            if (restartsLeft > 0) {
                 promislist.push(this.waitForSnooze());
+            } else {
+                console.log("No snoozing allowed on last alarm!");
             }
 
             await Promise.race(promislist).then((status) => {
