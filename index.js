@@ -30,6 +30,15 @@ app.post("/vlc", (req,res) => backend.onPostVlcCommand(req,res));
 app.post("/gpio", (req,res) => backend.onPostGpioCommand(req,res));
 
 // open port
-app.listen(process.env.PORT || 3000, () => {
+let server = app.listen(process.env.PORT || 3000, () => {
     console.log("Server became available. ");
 });
+
+process.on('SIGINT', _ => {
+    // TODO: If this still isn't clean enough there's
+    // https://www.npmjs.com/package/express-graceful-exit
+    server.close(() => {
+        console.log('closed express');
+        process.exit();
+     });
+}
