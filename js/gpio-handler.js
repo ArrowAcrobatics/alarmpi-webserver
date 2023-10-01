@@ -44,7 +44,7 @@ export class GpioHandler {
     }
 
     onButtonPress(button, value) {
-        console.log(`button ${button._name} callback called: ${value}.`);
+        console.log(`GpioHandler.onButtonPress ${button._name}: ${value}.`);
 
         switch(button._name) {
             case "B": {

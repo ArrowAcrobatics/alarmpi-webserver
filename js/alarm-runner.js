@@ -103,7 +103,7 @@ export class AlarmRunner {
                 this.waitForTimeout()
             ]).then((status) => {
                 this.resetDeferredPromises();
-                console.log(`AlarmRunner.run() loop status <<${status}>>`);
+                console.log(`AlarmRunner.run() received event <<${status}>>`);
 
                 switch(status) {
                     case this._STATUS_TIMEOUT:
