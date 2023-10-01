@@ -118,7 +118,6 @@ export class VlcBridge {
      * @param {string=} mediaPath - If unspecified, resumes the running video. If a valid media path is specified, start playing that media.
      */
     async play(mediaPath) {
-        console.log("VlcBridge.play");
         if (!mediaPath) {
             await this.exec("play");
         }
@@ -228,7 +227,7 @@ export class VlcBridge {
             if(!this._vlc) {
                 return reject("VLC is not available");
             }
-            console.log(`VlcBridge: ${command}`)
+            console.log(`VlcBridge.exec: ${command}`)
             this._vlc.stdin.write(`${command}\n`, err => {
                 if (err) reject(err);
                 return resolve();

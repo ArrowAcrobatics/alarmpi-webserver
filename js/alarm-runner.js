@@ -96,7 +96,7 @@ export class AlarmRunner {
             }
 
             if(!snoozeNextIteration) {
-                console.log("AlarmRunner.run activating sound.");
+                console.log("AlarmRunner.run emit: alarmpi-start.");
                 this._events.emit('alarmpi-start', this._alarmConf);
                 snoozeCounter = this._SNOOZE_COUNT;
                 restartCounter--;
@@ -133,7 +133,9 @@ export class AlarmRunner {
                 }
             });
 
-            // extra stop event won't hurt. It's more clear at end of loop than in the then().
+            // extra stop event at silent periods won't hurt.
+            // It's more clear at end of loop than in the then().
+            console.log("AlarmRunner.run emit: alarmpi-stop.");
             this._events.emit('alarmpi-stop', this._alarmConf);
         }
 
