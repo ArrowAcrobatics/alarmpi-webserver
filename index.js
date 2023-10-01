@@ -2,7 +2,7 @@ import express from 'express';
 import bodyParser from "body-parser";
 
 import {Gpio} from 'onoff';
-import {exec} from 'sys';
+import {exec} from 'child_process';
 
 import * as path from 'path';
 import {fileURLToPath} from 'url';
