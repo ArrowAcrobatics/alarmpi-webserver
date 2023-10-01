@@ -2,6 +2,7 @@ import express from 'express';
 import bodyParser from "body-parser";
 
 import {Gpio} from 'onoff';
+import {exec} from 'sys';
 
 import * as path from 'path';
 import {fileURLToPath} from 'url';
@@ -22,8 +23,13 @@ await backend.init();
 // gpio
 let buttons;
 if(Gpio.accessible) {
+    let pins = [17,27,22,24,25];
+    let pullup_cmd = `raspi-gpio set ${pins.join(",")} ip pu`;
+    console.log("ensure pull ups are enabled: " + pullup_cmd);
+    exec(pullup_cmd);
+
     buttons = new Map();
-    [0, 2, 3, 5, 6].forEach((gpiopinid) => {
+    pins.forEach((gpiopinid) => {
         buttons.set(`pin_id#${gpiopinid}`, new Gpio(gpiopinid, 'in', 'both', {debounceTimeout: 10}));
     });
 
@@ -39,6 +45,7 @@ if(Gpio.accessible) {
     });
 
     process.on('SIGINT', _ => {
+        // TODO: add 'once' wrapper
         console.log("deregister buttons.");
         buttons.forEach((button, name, map) => {
             try {
