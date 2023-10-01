@@ -12,8 +12,8 @@ export class AlarmScheduler {
         this._alarmsjobs = [];
         this._activeRunners = [];
 
-        this._events.on('stop', () => this.stop());
-        this._events.on('snooze', () => this.snooze());
+        this._events.on('action_stop', () => this.stop());
+        this._events.on('action_snooze', () => this.snooze());
     }
 
     /**
