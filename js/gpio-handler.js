@@ -17,11 +17,13 @@ export class GpioHandler {
     constructor(settings, appEvents) {
         this._settings = settings;
         this._events = appEvents;
-        this._buttonRed = new Button("red", 17, this);
-        this._buttonBlack = new Button("black", 27, this);
-        this._buttonYellow = new Button("yellow", 22, this);
-        this._buttonI = new Button("I", 24, this);
-        this._buttonII = new Button("II", 25, this);
+        this._buttonRed = new Button("R", 17, this);
+        this._buttonBlack = new Button("B", 27, this);
+        this._buttonYellow = new Button("Y", 22, this);
+        this._buttonI = new Button("1", 24, this);
+        this._buttonII = new Button("2", 25, this);
+
+        this._clickQ = [];
     }
 
     init() {
@@ -29,7 +31,13 @@ export class GpioHandler {
     }
 
     onButtonPress(button, value) {
-        console.log(`button ${button._name} callback called: ${value}`);
+        this._clickQ.push(button._name + (value? 1 : 0));
+
+        while(this._clickQ.length > 3) {
+            this._clickQ.shift();
+        }
+        
+        console.log(`button ${button._name} callback called: ${value}. Queue: ${this._clickQ.join(" ")}`);
     }
 
     async execBackendCommand(gpioJson) {
