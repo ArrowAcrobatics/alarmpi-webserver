@@ -19,17 +19,34 @@ export class VlcBridge {
         this._playlistIndex = 3;
         this._vlc = null;
 
-        this._events.on('alarmpi-start', async (alarmsettings) => {
-            console.log(`vlc received alarmpi-start: ${alarmsettings}`)
-            await this.play().catch(e => console.log(`Vlc failed alarm-start: ${e}`));
-        });
-        this._events.on('alarmpi-stop', async (alarmsettings) => {
-            console.log(`vlc received alarmpi-stop ${alarmsettings}`)
-            await this.stop().catch(e => console.log(`Vlc failed alarm-stop: ${e}`));
-        });
-
         this._isShuffled = false;
         this._isPlaying = false;
+
+        this.enableEventHandlers();
+    }
+
+    enableEventHandlers() {
+        this._events.on('alarmpi-start', async (alarmsettings) => {
+            console.log(`vlc received alarmpi-start: ${alarmsettings}`)
+            await this.play().catch(e => console.log(`Vlc failed "start": ${e}`));
+        });
+
+        this._events.on('alarmpi-stop', async (alarmsettings) => {
+            console.log(`vlc received alarmpi-stop ${alarmsettings}`)
+            await this.stop().catch(e => console.log(`Vlc failed "stop": ${e}`));
+        });
+
+        this._events.on("action_up", async () => {
+            await this.volup().catch(e => console.log(`Failed "volup": ${e}`));
+        });
+
+        this._events.on("action_down", async () => {
+            await this.voldown().catch(e => console.log(`Failed "voldown": ${e}`));
+        });
+
+        this._events.on("action_special", async () => {
+            await this.next().catch(e => console.log(`Failed "next": ${e}`));
+        });
     }
 
     async execBackendCommand(vlcJson) {
@@ -122,6 +139,18 @@ export class VlcBridge {
         this._isPlaying = false;
     }
 
+    async next() {
+        await this.exec("next");
+    }
+
+    async volup() {
+        await this.exec("volup");
+    }
+
+    async voldown() {
+        await this.exec("voldown");
+    }
+
     async setPlayPause(value) {
         if(value) {
             await this.play();
@@ -172,7 +201,6 @@ export class VlcBridge {
         await this.exec(`random ${mode}`);
         this._isShuffled = value;
     }
-
 
     async stop() {
         await this.exec("stop");

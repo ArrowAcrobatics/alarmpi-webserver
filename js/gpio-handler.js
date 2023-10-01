@@ -39,6 +39,10 @@ export class GpioHandler {
         this.buttons().forEach((button) => button.init());
     }
 
+    getMode() {
+        console.log("TODO: implement GpioHandler.getMode");
+    }
+
     onButtonPress(button, value) {
         console.log(`button ${button._name} callback called: ${value}.`);
 

@@ -14,6 +14,9 @@ export class AlarmScheduler {
 
         this._events.on('action_stop', () => this.stop());
         this._events.on('action_snooze', () => this.snooze());
+        this._events.on('mode_0', () => this.setMode(0));
+        this._events.on('mode_1', () => this.setMode(1));
+        this._events.on('mode_2', () => this.setMode(2));
     }
 
     /**
@@ -35,10 +38,15 @@ export class AlarmScheduler {
 
     stop() {
         console.log("AlarmScheduler.stop() called");
-        // this.reset();
+
         this._activeRunners.forEach((runner) => {
            runner.stop();
         });
+    }
+
+    setMode(i) {
+        console.log(`TODO: implement AlarmScheduler.setMode${i}`);
+        // (load from disk)
     }
 
     load(alarmListJson){
