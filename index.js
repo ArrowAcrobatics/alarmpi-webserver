@@ -1,9 +1,6 @@
 import express from 'express';
 import bodyParser from "body-parser";
 
-import {Gpio} from 'onoff';
-import {exec} from 'child_process';
-
 import * as path from 'path';
 import {fileURLToPath} from 'url';
 
@@ -19,45 +16,6 @@ console.log("starting server: " + new Date());
 let settings = new AppSettings(path.dirname(fileURLToPath(import.meta.url)));
 let backend = new AppBackend(settings);
 await backend.init();
-
-// gpio
-let buttons;
-if(Gpio.accessible) {
-    let pins = [17,27,22,24,25];
-    let pullup_cmd = `raspi-gpio set ${pins.join(",")} ip pu`;
-    console.log("ensure pull ups are enabled: " + pullup_cmd);
-    exec(pullup_cmd);
-
-    buttons = new Map();
-    pins.forEach((gpiopinid) => {
-        buttons.set(`pin_id#${gpiopinid}`, new Gpio(gpiopinid, 'in', 'both', {debounceTimeout: 10}));
-    });
-
-    buttons.forEach((button, name, map) => {
-        console.log(`adding watch for ${name}`);
-        button.watch((err, value) => {
-            console.log(`button ${name} callback called: ${value}`);
-            if (err) {
-                console.log(`error watching: ${e}`);
-                throw err;
-            }
-        });
-    });
-
-    process.on('SIGINT', _ => {
-        // TODO: add 'once' wrapper
-        console.log("deregister buttons.");
-        buttons.forEach((button, name, map) => {
-            try {
-                button.unexport();
-            } catch (e) {
-                console.log(`Error deregistering; ${e}`);
-            }
-        });
-    });
-} else {
-    console.log("No GPIO accessible");
-}
 
 // init express app
 const app = express();

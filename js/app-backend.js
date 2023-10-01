@@ -27,6 +27,8 @@ export class AppBackend {
         await this.initPug();
         await this.initVlc();
 
+        this.gpioHandler.init();
+
         this.alarmScheduler.load(await this.alarmStorage.getAlarms());
     }
 
