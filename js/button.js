@@ -16,7 +16,7 @@ export class Button {
             return;
         }
 
-        let pullup_cmd = `raspi-gpio set ${gpiopin} ip pu`;
+        let pullup_cmd = `raspi-gpio set ${this._pin} ip pu`;
         console.log(`Init button "${this._name}": ` + pullup_cmd);
         exec(pullup_cmd);
 
