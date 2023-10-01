@@ -34,9 +34,9 @@ let server = app.listen(process.env.PORT || 3000, () => {
     console.log("Server became available. ");
 });
 
+// Manually close the server on sigint.
+// (the button handlers prevent default behaviour)
 process.on('SIGINT', _ => {
-    // TODO: If this still isn't clean enough there's
-    // https://www.npmjs.com/package/express-graceful-exit
     server.close(() => {
         console.log('closed express');
         process.exit();

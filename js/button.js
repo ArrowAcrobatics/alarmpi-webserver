@@ -47,14 +47,15 @@ export class Button {
      * @returns {(function(*, *): void)|*}
      */
     onSigKill() {
-        return _=> {
+        return _ => {
             if(this._sigkillHandlerCalled) {
                 console.log("Multiple calls to sigint handler. Ignoring.");
                 return;
             }
+
             this._sigkillHandlerCalled = true;
+
             try {
-                //console.log("TODO: this is sigkill handler hangs the system if enabled.");
                 this._gpio.unexport();
             } catch (e) {
                 console.log(`Error deregistering button ${this._name} at pin ${this._pin}; ${e}`);
