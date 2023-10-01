@@ -84,9 +84,15 @@ export class AlarmRunner {
 
         for(let restartCounter = this._RESTART_COUNT; restartCounter> 0; ) {
             if (this._settings.verbose) {
-                console.log("+++++++++++++++++++");
-                console.log(`Restarts left: ${restartCounter}. Snoozes left: ${snoozeCounter}.`);
-                // console.log(this._alarmConf);
+                if(!snoozeNextIteration) {
+                    console.log("+++++++++++++++++++");
+                    console.log(`Restarts left: ${restartCounter}. Snoozes left: ${snoozeCounter}.`);
+                    // console.log(this._alarmConf);
+                }  else {
+                    if (this._settings.verbose) {
+                        console.log("~~~~~~~~~~~~~~~~~~~");
+                    }
+                }
             }
 
             if(!snoozeNextIteration) {
@@ -129,7 +135,6 @@ export class AlarmRunner {
 
             // extra stop event won't hurt. It's more clear at end of loop than in the then().
             this._events.emit('alarmpi-stop', this._alarmConf);
-
         }
 
         if (this._settings.verbose) {
