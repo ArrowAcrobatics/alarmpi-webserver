@@ -59,7 +59,7 @@ export class GpioHandler {
                 if (value) {
                     this._shiftHandled = true;
                     // emit on down only
-                    this.doEmit(this._shift ? 'action_stop' :'action_down');
+                    this.doEmit(this._shift ? 'action_down' : 'action_stop');
                 }
                 break;
             }
@@ -67,7 +67,7 @@ export class GpioHandler {
                 if (value) {
                     this._shiftHandled = true;
                     // emit on down only
-                    this.doEmit(this._shift ? 'action_snooze' :'action_up');
+                    this.doEmit(this._shift ? 'action_up' : 'action_snooze');
                 }
                 break;
             }
