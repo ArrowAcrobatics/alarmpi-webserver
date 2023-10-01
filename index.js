@@ -41,4 +41,4 @@ process.on('SIGINT', _ => {
         console.log('closed express');
         process.exit();
      });
-}
+});
