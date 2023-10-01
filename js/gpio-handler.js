@@ -17,11 +17,11 @@ export class GpioHandler {
     constructor(settings, appEvents) {
         this._settings = settings;
         this._events = appEvents;
-        this._buttonRed = new Button("red", 17);
-        this._buttonBlack = new Button("black", 27);
-        this._buttonYellow = new Button("yellow", 22);
-        this._buttonI = new Button("I", 24);
-        this._buttonII = new Button("II", 25);
+        this._buttonRed = new Button("red", 17, this);
+        this._buttonBlack = new Button("black", 27, this);
+        this._buttonYellow = new Button("yellow", 22, this);
+        this._buttonI = new Button("I", 24, this);
+        this._buttonII = new Button("II", 25, this);
     }
 
     init() {
