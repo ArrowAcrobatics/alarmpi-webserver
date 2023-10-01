@@ -80,13 +80,13 @@ export class AlarmRunner {
         console.log(`Started running an alarm at: ${new Date()}`);
 
         let snoozeNextIteration = false;
-        let snoozeCounter = this._SNOOZE_COUNT;
+        let snoozesLeft = this._SNOOZE_COUNT;
 
-        for(let restartCounter = this._RESTART_COUNT; restartCounter> 0; ) {
+        for(let restartsLeft = this._RESTART_COUNT; restartsLeft> 0; ) {
             if (this._settings.verbose) {
                 if(!snoozeNextIteration) {
                     console.log("+++++++++++++++++++");
-                    console.log(`Restarts left: ${restartCounter}. Snoozes left: ${snoozeCounter}.`);
+                    console.log(`Restarts left: ${restartsLeft}. Snoozes left: ${snoozesLeft}.`);
                     // console.log(this._alarmConf);
                 }  else {
                     if (this._settings.verbose) {
@@ -98,16 +98,20 @@ export class AlarmRunner {
             if(!snoozeNextIteration) {
                 console.log("AlarmRunner.run emit: alarmpi-start.");
                 this._events.emit('alarmpi-start', this._alarmConf);
-                snoozeCounter = this._SNOOZE_COUNT;
-                restartCounter--;
+                snoozesLeft = this._SNOOZE_COUNT;
+                restartsLeft--;
             }
 
             this.createDeferredPromises();
-            await Promise.race([
-                this.waitForStop(),
-                this.waitForSnooze(),
-                this.waitForTimeout()
-            ]).then((status) => {
+            let promislist= [];
+            promislist.push(this.waitForStop());
+            promislist.push(this.waitForTimeout());
+            if (restartsLeft > 1) {
+                // no snooze on the last iteration
+                promislist.push(this.waitForSnooze());
+            }
+
+            await Promise.race(promislist).then((status) => {
                 this.resetDeferredPromises();
                 console.log(`AlarmRunner.run() received event <<${status}>>`);
 
@@ -116,7 +120,7 @@ export class AlarmRunner {
                         snoozeNextIteration = !snoozeNextIteration;
                         break;
                     case this._STATUS_SNOOZE:
-                        if (snoozeCounter > 0) {
+                        if (snoozesLeft > 0) {
                             snoozeNextIteration = true;
                             // TODO: fire alarm snoozed one-shot?
                         } else {
@@ -125,10 +129,10 @@ export class AlarmRunner {
                             // TODO: fire alarm not snoozed one-shot?
                         }
 
-                        snoozeCounter--;
+                        snoozesLeft--;
                         break;
                     case this._STATUS_STOP:
-                        restartCounter = 0;
+                        restartsLeft = 0;
                         break;
                 }
             });
