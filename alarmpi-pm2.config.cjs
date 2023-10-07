@@ -7,7 +7,8 @@ module.exports = {
         ignore_watch: [
             "./node_modules",
             "./sounds",
-            "./alarms"
+            "./alarms",
+            "./static/js/gen"
         ]
     }]
 }
