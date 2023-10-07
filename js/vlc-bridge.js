@@ -36,6 +36,14 @@ export class VlcBridge {
             await this.stop().catch(e => console.log(`Vlc failed "stop": ${e}`));
         });
 
+        this._events.on('ui_short_blip', async () => {
+            // todo: move to ui vlc instance?
+        });
+
+        this._events.on('ui_short_blip', async () => {
+            // todo: move to ui vlc instance?
+        });
+
         this._events.on("action_up", async () => {
             await this.volup().catch(e => console.log(`Failed "volup": ${e}`));
         });

@@ -121,9 +121,11 @@ export class AlarmRunner {
                     case this._STATUS_SNOOZE:
                         snoozeNextIteration = true;
                         snoozesLeft--;
+                        this._events.emit('ui_short_blip');
                         break;
                     case this._STATUS_STOP:
                         restartsLeft = 0;
+                        this._events.emit('ui_long_blip');
                         break;
                 }
             });
