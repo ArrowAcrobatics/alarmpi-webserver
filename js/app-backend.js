@@ -41,9 +41,6 @@ export class AppBackend {
             .then(soundfiles => {
                 soundfiles.forEach(file => {
                     this.vlcbridge.add(this.settings.alarmSoundFolder + "/" + file)
-                        .then(() => {
-                            console.log("added " + file + " to playlist");
-                        })
                         .catch(() =>
                             console.warn(`Failed to add ${file} to playlist`)
                         );

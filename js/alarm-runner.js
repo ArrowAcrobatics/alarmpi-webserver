@@ -82,34 +82,32 @@ export class AlarmRunner {
         let snoozeNextIteration = false;
         let snoozesLeft = this._SNOOZE_COUNT;
 
-        for(let restartsLeft = this._RESTART_COUNT; restartsLeft> 0; ) {
+        for(let restartsLeft = this._RESTART_COUNT; restartsLeft > 0; ) {
             if (this._settings.verbose) {
                 if(!snoozeNextIteration) {
                     console.log("+++++++++++++++++++");
-                    console.log(`Restarts left: ${restartsLeft}. Snoozes left: ${snoozesLeft}.`);
-                    // console.log(this._alarmConf);
                 }  else {
-                    if (this._settings.verbose) {
-                        console.log("~~~~~~~~~~~~~~~~~~~");
-                    }
+                    console.log("~~~~~~~~~~~~~~~~~~~");
                 }
             }
-
             if(!snoozeNextIteration) {
                 console.log("AlarmRunner.run emit: alarmpi-start.");
                 this._events.emit('alarmpi-start', this._alarmConf);
                 snoozesLeft = this._SNOOZE_COUNT;
                 restartsLeft--;
             }
-
             this.createDeferredPromises();
+
             let promislist= [];
+
             promislist.push(this.waitForStop());
             promislist.push(this.waitForTimeout());
-            if (restartsLeft > 0) {
-                promislist.push(this.waitForSnooze());
-            } else {
+            if (restartsLeft <= 0) {
                 console.log("No snoozing allowed on last alarm!");
+            } else if (snoozesLeft <= 0){
+                console.log("No snoozing allowed anymore!");
+            } else {
+                promislist.push(this.waitForSnooze());
             }
 
             await Promise.race(promislist).then((status) => {
@@ -121,15 +119,7 @@ export class AlarmRunner {
                         snoozeNextIteration = !snoozeNextIteration;
                         break;
                     case this._STATUS_SNOOZE:
-                        if (snoozesLeft > 0) {
-                            snoozeNextIteration = true;
-                            // TODO: fire alarm snoozed one-shot?
-                        } else {
-                            snoozeNextIteration = false;
-                            console.log("Too many snoozes, deal with it.");
-                            // TODO: fire alarm not snoozed one-shot?
-                        }
-
+                        snoozeNextIteration = true;
                         snoozesLeft--;
                         break;
                     case this._STATUS_STOP:
@@ -138,10 +128,10 @@ export class AlarmRunner {
                 }
             });
 
-            // extra stop event at silent periods won't hurt.
-            // It's more clear at end of loop than in the then().
             console.log("AlarmRunner.run emit: alarmpi-stop.");
             this._events.emit('alarmpi-stop', this._alarmConf);
+
+            console.log(`Restarts left: ${restartsLeft}. Snoozes left: ${snoozesLeft}.`);
         }
 
         if (this._settings.verbose) {
