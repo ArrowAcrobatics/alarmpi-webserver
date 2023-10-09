@@ -56,13 +56,15 @@ export class VlcBridge {
     async open(extra_options) {
         return new Promise((resolve, reject) => {
             let options = [
-                "-f",
+                // "-f",
                 "--quiet",
                 "--no-playlist-autostart",
                 "--no-video-title-show",
-                "-I", "rc"
+                "-I",
+                // "rc"
             ];
             options.push(extra_options);
+            console.log("spawn cvlc with options: " + options.join(" "));
 
             this._vlc = spawn("cvlc", options);
 
