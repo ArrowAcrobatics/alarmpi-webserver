@@ -11,13 +11,22 @@ export class VlcBridge {
      *
      * @param {boolean=false} verbose - Tell if the VLC error stream should be relayed to the current process error stream.
      */
-    constructor() {
+    constructor(options) {
         this._playlist = new Map();
         this._playlistIndex = 3;
         this._vlc = null;
 
         this._isShuffled = false;
         this._isPlaying = false;
+
+        options.concat([
+            // "-f",
+            "--quiet",
+            "--no-playlist-autostart",
+            "--no-video-title-show",
+            "-I", "rc"
+        ]);
+        this.options = options;
     }
 
     async execBackendCommand(vlcJson) {
@@ -55,17 +64,8 @@ export class VlcBridge {
      */
     async open(extra_options) {
         return new Promise((resolve, reject) => {
-            let options = [
-                // "-f",
-                "--quiet",
-                "--no-playlist-autostart",
-                "--no-video-title-show",
-                "-I", "rc"
-            ];
-            options.concat(extra_options);
-            console.log("spawn cvlc with options: " + options.join(" "));
-
-            this._vlc = spawn("cvlc", options);
+            console.log("spawn cvlc with options: " + this.options.join(" "));
+            this._vlc = spawn("cvlc", this.options);
 
             this._vlc.on('spawn', () => {
                 console.info(`VLC spawn success.`);
