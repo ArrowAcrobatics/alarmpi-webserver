@@ -19,14 +19,13 @@ export class VlcBridge {
         this._isShuffled = false;
         this._isPlaying = false;
 
-        options.concat([
+        this.options = options.concat([
             // "-f",
             "--quiet",
             "--no-playlist-autostart",
             "--no-video-title-show",
             "-I", "rc"
         ]);
-        this.options = options;
     }
 
     async execBackendCommand(vlcJson) {
