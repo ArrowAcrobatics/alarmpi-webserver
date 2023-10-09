@@ -2,12 +2,13 @@
  * A vlc instance that is intended for one-shot audio.
  * It does not layer, but rather does 'replace' style overlapping.
  */
+import {VlcBridge} from "./vlc-bridge.js";
 
 export class AudioUi {
     constructor(settings, appEvents) {
         this._settings = settings;
         this._events = appEvents;
-        this._vlc = null;
+        this._vlc = new VlcBridge();
 
         this.enableEventHandlers();
     }

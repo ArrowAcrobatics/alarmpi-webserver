@@ -11,9 +11,7 @@ export class VlcBridge {
      *
      * @param {boolean=false} verbose - Tell if the VLC error stream should be relayed to the current process error stream.
      */
-    constructor(settings) {
-        this._settings = settings;
-
+    constructor() {
         this._playlist = new Map();
         this._playlistIndex = 3;
         this._vlc = null;
@@ -70,9 +68,8 @@ export class VlcBridge {
             this._vlc.on('spawn', () => {
                 console.info(`VLC spawn success.`);
 
-                if (this._settings.verbose) {
-                    this._vlc.stderr.on("data", data => process.stderr.write(data));
-                }
+                this._vlc.stderr.on("data", data => process.stderr.write(data));
+
                 return resolve();
             });
 

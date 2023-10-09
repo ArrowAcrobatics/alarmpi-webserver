@@ -2,12 +2,13 @@
  * Wraps the vlc bridge with a bunch of alarm related features.
  */
 import fs from "node:fs/promises";
+import {VlcBridge} from "./vlc-bridge.js";
 
 export class AlarmPlayer {
     constructor(settings, appEvents) {
         this._settings = settings;
         this._events = appEvents;
-        this._vlc = null;
+        this._vlc = new VlcBridge();
 
         this.enableEventHandlers();
     }
