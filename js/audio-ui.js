@@ -37,11 +37,11 @@ export class AudioUi {
         await this._vlc.open().catch((e) =>
             console.warn(`Failed to open VLC ${e}`));
 
-        // [this._settings.uiSoundLongBlip, this._settings.uiSoundShortBlip].forEach(file => {
-        //     this._vlc.add(file)
-        //         .catch(() =>
-        //             console.warn(`Failed to add ${file} to playlist`)
-        //         );
-        // });
+        [this._settings.uiSoundLongBlip, this._settings.uiSoundShortBlip].forEach(file => {
+            this._vlc.add(file)
+                .catch(() =>
+                    console.warn(`Failed to add ${file} to playlist`)
+                );
+        });
     }
 };
