@@ -6,9 +6,12 @@ export class AppSettings {
         this.rootDir = rootDir;
         this.alarmFileRead = 'alarms/alarms.json';
         this.alarmFileWrite = 'alarms/alarms-pending-update.json';
+
         this.alarmSoundFolder = rootDir + "/sounds";
-        this.uiSoundLongBlip = this.alarmSoundFolder + "/ui-long-blip";
-        this.uiSoundShortBlip = this.alarmSoundFolder + "/ui-short-blip";
+        this.uiSoundFolder = rootDir + "/sounds-ui";
+
+        this.uiSoundLongBlip = this.uiSoundFolder + "/ui-long-blip.mp3";
+        this.uiSoundShortBlip = this.uiSoundFolder + "/ui-short-blip.mp3";
 
         this.snoozeTimeMs = 30*1000;
         this.snoozeCount = 3; // max amount of consecutive accepted snoozes.
