@@ -9,5 +9,9 @@ export class AppSettings {
         this.alarmSoundFolder = rootDir + "/sounds";
         this.uiSoundLongBlip = this.alarmSoundFolder + "ui-long-blip";
         this.uiSoundShortBlip = this.alarmSoundFolder + "ui-short-blip";
+
+        this.snoozeTimeMs = 30*1000;
+        this.snoozeCount = 3; // max amount of consecutive accepted snoozes.
+        this.ringCount = 4; // max amount of consecutive rings.
     }
 }

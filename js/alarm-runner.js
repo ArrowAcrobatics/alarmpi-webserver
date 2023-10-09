@@ -1,5 +1,5 @@
 import * as utils from "./utils.js";
-import {Deferred} from "./utils.js";
+import {Audic} from 'audic';
 
 /**
  * Responsible for a single alarm instance/moment.
@@ -12,16 +12,16 @@ export class AlarmRunner {
         this._alarmConf = alarmSettingsJson;
         this._events = appEvents;
 
-        this._snoozeDeferred = null;
-        this._stopDeferred = null;
-        this._timeoutDeferred = null;
+        this._snoozeDeferred = null; // deferred promise, resolved by calling this.snooze()
+        this._stopDeferred = null; // deferred promise, resolved by calling this.stop()
+        this._timeoutDeferred = null; // deferred promise, resolved by calling this.timeout() or after snoozeTimeMs.
 
         this._STATUS_STOP = "stop";
         this._STATUS_SNOOZE = "snooze";
         this._STATUS_TIMEOUT = "timeout";
-        this._RESTART_COUNT = 4;
-        this._SNOOZE_COUNT = 3; // max amount of consecutive snoozes.
-        this._SNOOZETIME_MS = 30*1000; // TODO: move to settings
+
+        this.uiSoundLongBlip = new Audic(this._settings.uiSoundLongBlip);
+        this.uiSoundShortBlip = new Audic(this._settings.uiSoundShortBlip);
     }
 
     snooze(verbose = true){
@@ -66,7 +66,7 @@ export class AlarmRunner {
         this._snoozeDeferred = new utils.Deferred();
         this._stopDeferred = new utils.Deferred();
         this._timeoutDeferred = new utils.Deferred((resolve, reject) => {
-            utils.sleep(10000).then(resolve);
+            utils.sleep(this._settings.snoozeTimeMs).then(resolve);
         });
     }
 
@@ -80,9 +80,9 @@ export class AlarmRunner {
         console.log(`Started running an alarm at: ${new Date()}`);
 
         let snoozeNextIteration = false;
-        let snoozesLeft = this._SNOOZE_COUNT;
+        let snoozesLeft = this._settings.snoozeCount;
 
-        for(let restartsLeft = this._RESTART_COUNT; restartsLeft > 0; ) {
+        for(let restartsLeft = this._settings.ringCount; restartsLeft > 0; ) {
             if (this._settings.verbose) {
                 if(!snoozeNextIteration) {
                     console.log("+++++++++++++++++++");
@@ -93,7 +93,7 @@ export class AlarmRunner {
             if(!snoozeNextIteration) {
                 console.log("AlarmRunner.run emit: alarmpi-start.");
                 this._events.emit('alarmpi-start', this._alarmConf);
-                snoozesLeft = this._SNOOZE_COUNT;
+                snoozesLeft = this._settings.snoozeCount;
                 restartsLeft--;
             }
             this.createDeferredPromises();
@@ -110,28 +110,35 @@ export class AlarmRunner {
                 promislist.push(this.waitForSnooze());
             }
 
+            let uiSound = null;
+
             await Promise.race(promislist).then((status) => {
                 this.resetDeferredPromises();
                 console.log(`AlarmRunner.run() received event <<${status}>>`);
 
-                switch(status) {
+                switch (status) {
                     case this._STATUS_TIMEOUT:
                         snoozeNextIteration = !snoozeNextIteration;
                         break;
                     case this._STATUS_SNOOZE:
                         snoozeNextIteration = true;
                         snoozesLeft--;
-                        this._events.emit('ui_short_blip');
+                        // this._events.emit('ui_short_blip');
+                        uiSound = this.uiSoundShortBlip;
                         break;
                     case this._STATUS_STOP:
                         restartsLeft = 0;
-                        this._events.emit('ui_long_blip');
+                        // this._events.emit('ui_long_blip');
+                        uiSound = this.uiSoundShortBlip;
                         break;
                 }
             });
 
             console.log("AlarmRunner.run emit: alarmpi-stop.");
             this._events.emit('alarmpi-stop', this._alarmConf);
+            if(uiSound != null) {
+                await uiSound.play();
+            }
 
             console.log(`Restarts left: ${restartsLeft}. Snoozes left: ${snoozesLeft}.`);
         }
