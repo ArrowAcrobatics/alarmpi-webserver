@@ -60,8 +60,7 @@ export class VlcBridge {
                 "--quiet",
                 "--no-playlist-autostart",
                 "--no-video-title-show",
-                "-I",
-                // "rc"
+                "-I", "rc"
             ];
             options.push(extra_options);
             console.log("spawn cvlc with options: " + options.join(" "));
