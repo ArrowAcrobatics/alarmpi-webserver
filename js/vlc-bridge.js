@@ -11,7 +11,7 @@ export class VlcBridge {
      *
      * @param {boolean=false} verbose - Tell if the VLC error stream should be relayed to the current process error stream.
      */
-    constructor(options) {
+    constructor(options=[]) {
         this._playlist = new Map();
         this._playlistIndex = 3;
         this._vlc = null;
