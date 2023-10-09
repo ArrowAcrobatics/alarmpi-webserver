@@ -1,5 +1,5 @@
 import * as utils from "./utils.js";
-import {Audic} from 'audic';
+import Audic from 'audic';
 
 /**
  * Responsible for a single alarm instance/moment.
