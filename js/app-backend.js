@@ -17,14 +17,13 @@ export class AppBackend {
         this.settings = settings;
         this.pugRenderAlarmsPage = null;
 
-        this.eventEmitter = new AppBackendEmitter();
+        this._events = new AppBackendEmitter();
 
-        this.alarmScheduler = new AlarmScheduler(settings, this.eventEmitter);
-        this.alarmStorage = new AlarmStorage(settings, this.eventEmitter);
-        this.gpioHandler = new GpioHandler(settings, this.eventEmitter);
-        // this.vlcbridge = new VlcBridge(settings, this.eventEmitter);
-        this.alarmPlayer = new AlarmPlayer(settings, this.eventEmitter);
-        this.audioUi = new AudioUi(settings, this.eventEmitter);
+        this.alarmScheduler = new AlarmScheduler(settings, this._events);
+        this.alarmStorage = new AlarmStorage(settings, this._events);
+        this.gpioHandler = new GpioHandler(settings, this._events);
+        this.alarmPlayer = new AlarmPlayer(settings, this._events);
+        this.audioUi = new AudioUi(settings, this._events);
     }
 
     async init() {
@@ -90,6 +89,7 @@ export class AppBackend {
                 });
             })
             .then( () => this.alarmScheduler.load(request.body))
+            .then( () => this._events.emit('ui_long_blip'))
             .catch(err => console.log("failed setting alarms!"));
     }
 
