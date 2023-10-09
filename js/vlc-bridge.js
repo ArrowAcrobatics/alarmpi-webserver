@@ -62,7 +62,7 @@ export class VlcBridge {
                 "--no-video-title-show",
                 "-I", "rc"
             ];
-            options.push(extra_options);
+            options.concat(extra_options);
             console.log("spawn cvlc with options: " + options.join(" "));
 
             this._vlc = spawn("cvlc", options);
