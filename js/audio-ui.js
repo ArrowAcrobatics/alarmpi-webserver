@@ -8,7 +8,7 @@ export class AudioUi {
     constructor(settings, appEvents) {
         this._settings = settings;
         this._events = appEvents;
-        this._vlc = new VlcBridge();
+        this._vlc = new VlcBridge(["--play-and-stop"]);
 
         this.enableEventHandlers();
     }
@@ -16,10 +16,12 @@ export class AudioUi {
     enableEventHandlers() {
          this._events.on('ui_short_blip', async () => {
             console.log("AudioUi -> ui_short_blip");
+            await this._vlc.play(this._settings.uiSoundShortBlip).catch(e => console.log(`Vlc failed "start": ${e}`));
         });
 
         this._events.on('ui_long_blip', async () => {
             console.log("AudioUi -> ui_long_blip");
+            await this._vlc.play(this._settings.uiSoundLongBlip).catch(e => console.log(`Vlc failed "start": ${e}`));
         });
 
         this._events.on("action_up", async () => {
@@ -35,11 +37,11 @@ export class AudioUi {
         await this._vlc.open().catch((e) =>
             console.warn(`Failed to open VLC ${e}`));
 
-        [this._settings.uiSoundLongBlip, this._settings.uiSoundShortBlip].forEach(file => {
-            this._vlc.add(file)
-                .catch(() =>
-                    console.warn(`Failed to add ${file} to playlist`)
-                );
-        });
+        // [this._settings.uiSoundLongBlip, this._settings.uiSoundShortBlip].forEach(file => {
+        //     this._vlc.add(file)
+        //         .catch(() =>
+        //             console.warn(`Failed to add ${file} to playlist`)
+        //         );
+        // });
     }
 };

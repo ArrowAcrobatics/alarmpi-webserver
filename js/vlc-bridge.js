@@ -53,7 +53,7 @@ export class VlcBridge {
      * Open the VLC media player with an empty playlist. VLC will not take
      * over the display until the first media is added to the playlist.
      */
-    async open() {
+    async open(extra_options) {
         return new Promise((resolve, reject) => {
             let options = [
                 "-f",
@@ -62,6 +62,7 @@ export class VlcBridge {
                 "--no-video-title-show",
                 "-I", "rc"
             ];
+            options.push(extra_options);
 
             this._vlc = spawn("cvlc", options);
 
