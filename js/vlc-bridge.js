@@ -11,9 +11,8 @@ export class VlcBridge {
      *
      * @param {boolean=false} verbose - Tell if the VLC error stream should be relayed to the current process error stream.
      */
-    constructor(settings, appEvents) {
+    constructor(settings) {
         this._settings = settings;
-        this._events = appEvents;
 
         this._playlist = new Map();
         this._playlistIndex = 3;
@@ -21,40 +20,6 @@ export class VlcBridge {
 
         this._isShuffled = false;
         this._isPlaying = false;
-
-        this.enableEventHandlers();
-    }
-
-    enableEventHandlers() {
-        this._events.on('alarmpi-start', async (alarmsettings) => {
-            console.log(`vlc received alarmpi-start: ${alarmsettings}`)
-            await this.play().catch(e => console.log(`Vlc failed "start": ${e}`));
-        });
-
-        this._events.on('alarmpi-stop', async (alarmsettings) => {
-            console.log(`vlc received alarmpi-stop ${alarmsettings}`)
-            await this.stop().catch(e => console.log(`Vlc failed "stop": ${e}`));
-        });
-
-        this._events.on('ui_short_blip', async () => {
-            // todo: move to ui vlc instance?
-        });
-
-        this._events.on('ui_short_blip', async () => {
-            // todo: move to ui vlc instance?
-        });
-
-        this._events.on("action_up", async () => {
-            await this.volup().catch(e => console.log(`Failed "volup": ${e}`));
-        });
-
-        this._events.on("action_down", async () => {
-            await this.voldown().catch(e => console.log(`Failed "voldown": ${e}`));
-        });
-
-        this._events.on("action_special", async () => {
-            await this.next().catch(e => console.log(`Failed "next": ${e}`));
-        });
     }
 
     async execBackendCommand(vlcJson) {

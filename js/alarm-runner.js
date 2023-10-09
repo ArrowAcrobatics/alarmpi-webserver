@@ -123,22 +123,17 @@ export class AlarmRunner {
                     case this._STATUS_SNOOZE:
                         snoozeNextIteration = true;
                         snoozesLeft--;
-                        // this._events.emit('ui_short_blip');
-                        uiSound = this.uiSoundShortBlip;
+                        this._events.emit('ui_short_blip');
                         break;
                     case this._STATUS_STOP:
                         restartsLeft = 0;
-                        // this._events.emit('ui_long_blip');
-                        uiSound = this.uiSoundShortBlip;
+                        this._events.emit('ui_long_blip');
                         break;
                 }
             });
 
             console.log("AlarmRunner.run emit: alarmpi-stop.");
             this._events.emit('alarmpi-stop', this._alarmConf);
-            if(uiSound != null) {
-                await uiSound.play();
-            }
 
             console.log(`Restarts left: ${restartsLeft}. Snoozes left: ${snoozesLeft}.`);
         }

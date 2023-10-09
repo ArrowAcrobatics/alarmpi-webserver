@@ -7,6 +7,8 @@ import {AlarmStorage} from "./alarm-storage.js";
 import {GpioHandler} from "./gpio-handler.js";
 
 import { EventEmitter } from 'node:events';
+import {AudioUi} from "./audio-ui.js";
+import {AlarmPlayer} from "./audio-alarm-player.js";
 
 class AppBackendEmitter extends EventEmitter {};
 
@@ -20,33 +22,22 @@ export class AppBackend {
         this.alarmScheduler = new AlarmScheduler(settings, this.eventEmitter);
         this.alarmStorage = new AlarmStorage(settings, this.eventEmitter);
         this.gpioHandler = new GpioHandler(settings, this.eventEmitter);
-        this.vlcbridge = new VlcBridge(settings, this.eventEmitter);
+        // this.vlcbridge = new VlcBridge(settings, this.eventEmitter);
+        this.alarmPlayer = new AlarmPlayer(settings, this.eventEmitter);
+        this.audioUi = new AudioUi(settings, this.eventEmitter);
     }
 
     async init() {
         await this.initPug();
-        await this.initVlc();
+        await this.alarmPlayer.init();
+        await this.audioUi.init();
 
         this.gpioHandler.init();
 
         this.alarmScheduler.load(await this.alarmStorage.getAlarms());
     }
 
-    async initVlc() {
-        await this.vlcbridge.open().catch((e) =>
-            console.warn(`Failed to open VLC ${e}`));
 
-        // load the sound files into the vlc bridge.
-        fs.readdir(this.settings.alarmSoundFolder)
-            .then(soundfiles => {
-                soundfiles.forEach(file => {
-                    this.vlcbridge.add(this.settings.alarmSoundFolder + "/" + file)
-                        .catch(() =>
-                            console.warn(`Failed to add ${file} to playlist`)
-                        );
-                });
-            });
-    }
 
     /**
      * Constructs rendering funcs for back-/frontend and .js file for static front end loading.
@@ -126,7 +117,7 @@ export class AppBackend {
     async onPostVlcCommand(request, response) {
         console.log("post request: /vlc from: " + request.headers.host);
 
-        this.vlcbridge.execBackendCommand(request.body)
+        this.alarmPlayer.execBackendCommand(request.body)
             .then(
                 response.status(200).json({
                     status: "success",
