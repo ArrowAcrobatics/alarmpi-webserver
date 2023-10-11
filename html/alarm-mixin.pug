@@ -3,10 +3,6 @@ mixin alarm_mixin(alarmvar)
         .alarmpi.card.bg-custom-light
             .card-body.row.no-gutters
                 .alarmpi-widget.col.no-padding-r
-                    #hidden.alarmpi-data.visually-hidden
-                        input#guid.form-control(type="text", value=alarmvar.hidden.guid)
-                        input#index.form-control(type="text", value=alarmvar.hidden.index)
-                        input#name.form-control(type="text", value=alarmvar.hidden.name)
                     #settings.alarmpi-data.form-group.row.d-flex.justify-content-around
                         .col-auto
                             input#active(type="checkbox", data-toggle="toggle", checked=alarmvar.settings.active, data-onstyle="success", data-offstyle="outline-secondary")

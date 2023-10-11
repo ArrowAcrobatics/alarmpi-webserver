@@ -56,11 +56,6 @@ export function AddAlarm() {
     console.log("add alarm button");
 
     let defaultalarm = JSON.parse(`{
-            "hidden": {
-                "guid": "peepee",
-                "index": -1,
-                "name": "alarmpi"
-            },
             "settings": {
                 "active": true,
                 "time": "13:00"
@@ -117,7 +112,6 @@ function alarmpiJsonSingle(alarmpi) {
             resultJson[groupName][id] = value;
         });
     });
-    resultJson["hidden"]["index"] = newIndex;
 
     return resultJson;
 }
