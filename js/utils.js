@@ -19,13 +19,19 @@ export function sleep(ms) {
   });
 }
 
+/**
+ * Use as a promise. Can be resolve() reject()-ed as if they were member functions.
+ */
 export class Deferred {
     // promise;
     // resolve;
     // reject;
     constructor(handler) {
+        // rename as local variable to use Deferred.this in the promise constructor
         let _this = this;
+
         this.promise = new Promise(function (_resolve, _reject) {
+            // copies the promise resolve/reject callbacks to scope of Deferred.this
             _this.resolve = _resolve;
             _this.reject = _reject;
             if (handler) {

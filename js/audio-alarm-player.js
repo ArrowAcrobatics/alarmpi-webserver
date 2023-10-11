@@ -16,13 +16,15 @@ export class AlarmPlayer {
     }
 
     enableEventHandlers() {
-        this._events.on('alarmpi-reload', async (alarmsettings) => {
+        this._events.on('alarmpi-reload', async (reloadDoneDeferred) => {
             console.log(`AlarmPlayer.alarmpi-reload: stop`)
-            await this._vlc.stop();
+            await this._vlc.stop().catch(() => reloadDoneDeferred.reject());
             console.log(`AlarmPlayer.alarmpi-reload: clear`)
-            await this._vlc.clear();
+            await this._vlc.clear().catch(() => reloadDoneDeferred.reject());
             console.log(`AlarmPlayer.alarmpi-reload: load`)
-            await this.loadPlaylist();
+            await this.loadPlaylist().catch(() => reloadDoneDeferred.reject());
+
+            reloadDoneDeferred.resolve();
         });
 
         this._events.on('alarmpi-start', async (alarmsettings) => {
