@@ -83,6 +83,7 @@ export class AlarmRunner {
         let reloadDoneDeferred = new utils.Deferred();
         this._events.emit('alarmpi-reload', reloadDoneDeferred);
         await reloadDoneDeferred;
+        console.log("AlarmRunner.run: reload done.");
 
         let snoozeNextIteration = false;
         let snoozesLeft = this._settings.snoozeCount;

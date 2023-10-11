@@ -23,7 +23,7 @@ export class AlarmPlayer {
             await this._vlc.clear().catch(() => reloadDoneDeferred.reject());
             console.log(`AlarmPlayer.alarmpi-reload: load`)
             await this.loadPlaylist().catch(() => reloadDoneDeferred.reject());
-
+            console.log(`AlarmPlayer.alarmpi-reload: resolve`)
             reloadDoneDeferred.resolve();
         });
 
