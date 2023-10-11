@@ -179,6 +179,7 @@ export class VlcBridge {
 
     async clear() {
         await this.exec("clear");
+        this._playlist.clear();
     }
 
     /**
