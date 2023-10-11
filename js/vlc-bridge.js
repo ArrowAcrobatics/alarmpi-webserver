@@ -203,7 +203,9 @@ export class VlcBridge {
             if(!this._vlc) {
                 return reject("VLC is not available");
             }
-            console.log(`VlcBridge.exec: ${command}`)
+
+            console.log(`VlcBridge.exec: ${command}`);
+
             this._vlc.stdin.write(`${command}\n`, err => {
                 if (err) reject(err);
                 return resolve();

@@ -53,19 +53,16 @@ export class AlarmPlayer {
     }
 
     async loadPlaylist() {
-        await this._vlc.clear().catch((e) =>
-                    console.warn(`Failed to clear VLC playlist: ${e}`));
-
         if(this.soundFiles == null) {
             await fs.readdir(this._settings.alarmSoundFolder)
                 .then(soundfiles => this.soundFiles = soundfiles);
         }
 
-        this.soundFiles.forEach(file => {
-            this._vlc.add(this._settings.alarmSoundFolder + "/" + file)
+        for(const file of this.soundFiles) {
+            await this._vlc.add(this._settings.alarmSoundFolder + "/" + file)
                 .catch((e) =>
                     console.warn(`Failed to add ${file} to playlist: ${e}`)
                 );
-        });
+        };
     }
 }
