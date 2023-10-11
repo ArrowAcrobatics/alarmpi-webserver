@@ -18,16 +18,16 @@ html(lang="en")
         .d-flex.justify-content-center
             .d-flex(style="width: 25em")
                 #alarm-container.d-flex.justify-content-center.vstack
+                    .d-flex.align-items-end.flex-column
+                        .d-flex.btn-group
+                            button.btn.btn-primary.bg-custom-light-dark.alarmpi-debug
+                                i.fas.fa-bug(aria-hidden="true")
                     ul#sortable(style="width: 25em")
                         +vlc_debug_mixin()
                         +gpio_debug_mixin()
                         each alarm in alarms
                             +alarm_mixin(alarm)
                     .d-flex.align-items-end.flex-column
-                        .d-flex
-                            .d-flex.btn-group
-                                button.btn.btn-primary.bg-custom-light-dark.alarmpi-debug
-                                    i.fas.fa-bug(aria-hidden="true")
                             .d-flex.btn-group
                                 button.btn.btn-primary.bg-custom-light-dark.alarmpi-add
                                     i.fas.fa-plus(aria-hidden="true")
