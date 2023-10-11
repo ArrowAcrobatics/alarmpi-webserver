@@ -21,6 +21,13 @@ export function sleep(ms) {
 
 /**
  * Use as a promise. Can be resolve() reject()-ed as if they were member functions.
+ *
+ * // somewhere
+ * let d = new Deferred(() => console.log("hi"));
+ * await d.promise;
+ *
+ * // elsewhere
+ * d.resolve();
  */
 export class Deferred {
     // promise;

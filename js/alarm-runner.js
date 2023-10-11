@@ -82,7 +82,7 @@ export class AlarmRunner {
         // Assumes only one, well-behaved, event listener.
         let reloadDoneDeferred = new utils.Deferred();
         this._events.emit('alarmpi-reload', reloadDoneDeferred);
-        await reloadDoneDeferred;
+        await reloadDoneDeferred.promise;
         console.log("AlarmRunner.run: reload done.");
 
         let snoozeNextIteration = false;
