@@ -17,23 +17,21 @@ export class AlarmPlayer {
 
     enableEventHandlers() {
         this._events.on('alarmpi-reload', async (reloadDoneDeferred) => {
-            console.log(`AlarmPlayer.alarmpi-reload: stop`)
+            console.log(`AlarmPlayer.alarmpi-reload`)
             await this._vlc.stop().catch(() => reloadDoneDeferred.reject());
-            console.log(`AlarmPlayer.alarmpi-reload: clear`)
             await this._vlc.clear().catch(() => reloadDoneDeferred.reject());
-            console.log(`AlarmPlayer.alarmpi-reload: load`)
             await this.loadPlaylist().catch(() => reloadDoneDeferred.reject());
-            console.log(`AlarmPlayer.alarmpi-reload: resolve`)
+
             reloadDoneDeferred.resolve();
         });
 
         this._events.on('alarmpi-start', async (alarmsettings) => {
-            console.log(`AlarmPlayer.alarmpi-start: play`)
+            console.log(`AlarmPlayer.alarmpi-start`)
             await this._vlc.play().catch(e => console.log(`Vlc failed "start": ${e}`));
         });
 
         this._events.on('alarmpi-stop', async (alarmsettings) => {
-            console.log(`AlarmPlayer.alarmpi-stop stop`)
+            console.log(`AlarmPlayer.alarmpi-stop`)
             await this._vlc.stop().catch(e => console.log(`Vlc failed "stop": ${e}`));
         });
 

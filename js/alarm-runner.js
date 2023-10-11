@@ -1,9 +1,8 @@
 import * as utils from "./utils.js";
-import Audic from 'audic';
 
 /**
  * Responsible for a single alarm instance/moment.
- * Deals with the button UI and operates the VLC bridge.
+ * Exposes button UI callbacks (snooze, stop, timeout) and emits alarmpi-* events.
  */
 export class AlarmRunner {
     constructor(settings, appEvents, alarmSettingsJson) {
@@ -12,16 +11,16 @@ export class AlarmRunner {
         this._alarmConf = alarmSettingsJson;
         this._events = appEvents;
 
-        this._snoozeDeferred = null; // deferred promise, resolved by calling this.snooze()
-        this._stopDeferred = null; // deferred promise, resolved by calling this.stop()
-        this._timeoutDeferred = null; // deferred promise, resolved by calling this.timeout() or after snoozeTimeMs.
+        // deferred promises, resolved by calling this.snooze(), .stop(),
+        // and .timeout() or after snoozeTimeMs respectively.
+        this._snoozeDeferred = null;
+        this._stopDeferred = null;
+        this._timeoutDeferred = null;
 
+        // return values for the promises.
         this._STATUS_STOP = "stop";
         this._STATUS_SNOOZE = "snooze";
         this._STATUS_TIMEOUT = "timeout";
-
-        this.uiSoundLongBlip = new Audic(this._settings.uiSoundLongBlip);
-        this.uiSoundShortBlip = new Audic(this._settings.uiSoundShortBlip);
     }
 
     snooze(verbose = true){
@@ -42,7 +41,8 @@ export class AlarmRunner {
             this[defer].resolve();
             this[defer] = null;
         } else {
-            if (verbose) console.log(`AlarmRunner.${defer}() called but its deferred is null?`);
+            // might get here when snooze button is pressed and no longer allowed.
+            if (verbose) console.log(`AlarmRunner.${defer}() called but its deferred is null.`);
         }
     }
 
@@ -62,11 +62,11 @@ export class AlarmRunner {
     }
 
     // _must_ be reset before reassigning stopResolved to prevent memory leaks!
-    createDeferredPromises() {
+    createDeferredPromises(timeout) {
         this._snoozeDeferred = new utils.Deferred();
         this._stopDeferred = new utils.Deferred();
         this._timeoutDeferred = new utils.Deferred((resolve, reject) => {
-            utils.sleep(this._settings.snoozeTimeMs).then(resolve);
+            utils.sleep(timeout).then(resolve);
         });
     }
 
@@ -79,46 +79,48 @@ export class AlarmRunner {
     async run() {
         console.log(`Started running an alarm at: ${new Date()}`);
 
+        // Reload needs to finish before alarmpi-start is emitted, so we await a deferred.
         // Assumes only one, well-behaved, event listener.
         let reloadDoneDeferred = new utils.Deferred();
         this._events.emit('alarmpi-reload', reloadDoneDeferred);
         await reloadDoneDeferred.promise;
+
         console.log("AlarmRunner.run: reload done.");
 
         let snoozeNextIteration = false;
         let snoozesLeft = this._settings.snoozeCount;
 
         for(let restartsLeft = this._settings.ringCount; restartsLeft > 0; ) {
-            if (this._settings.verbose) {
-                if(!snoozeNextIteration) {
-                    console.log("+++++++++++++++++++");
-                }  else {
-                    console.log("~~~~~~~~~~~~~~~~~~~");
-                }
-            }
+            let timeout;
+
             if(!snoozeNextIteration) {
+                if (this._settings.verbose) console.log("+++++++++++++++++++");
+
                 console.log("AlarmRunner.run emit: alarmpi-start.");
                 this._events.emit('alarmpi-start', this._alarmConf);
+
+                timeout = this._settings.ringTimeMs;
                 snoozesLeft = this._settings.snoozeCount;
                 restartsLeft--;
+            } else {
+                if (this._settings.verbose) console.log("~~~~~~~~~~~~~~~~~~~");
+                timeout = this._settings.snoozeTimeMs;
             }
-            this.createDeferredPromises();
 
-            let promislist= [];
-
-            promislist.push(this.waitForStop());
-            promislist.push(this.waitForTimeout());
+            // determine and set up the events to wait for (stop/snooze/timeout).
+            let promises= [];
+            this.createDeferredPromises(timeout);
+            promises.push(this.waitForStop());
+            promises.push(this.waitForTimeout());
             if (restartsLeft <= 0) {
                 console.log("No snoozing allowed on last alarm!");
             } else if (snoozesLeft <= 0){
                 console.log("No snoozing allowed anymore!");
             } else {
-                promislist.push(this.waitForSnooze());
+                promises.push(this.waitForSnooze());
             }
 
-            let uiSound = null;
-
-            await Promise.race(promislist).then((status) => {
+            await Promise.race(promises).then((status) => {
                 this.resetDeferredPromises();
                 console.log(`AlarmRunner.run() received event <<${status}>>`);
 
@@ -148,5 +150,4 @@ export class AlarmRunner {
             console.log("AlarmRunner.run() done");
         }
     }
-
 }
