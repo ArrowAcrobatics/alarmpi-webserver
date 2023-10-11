@@ -63,8 +63,8 @@ export class AlarmPlayer {
 
         this.soundFiles.forEach(file => {
             this._vlc.add(this._settings.alarmSoundFolder + "/" + file)
-                .catch(() =>
-                    console.warn(`Failed to add ${file} to playlist`)
+                .catch((e) =>
+                    console.warn(`Failed to add ${file} to playlist: ${e}`)
                 );
         });
     }
