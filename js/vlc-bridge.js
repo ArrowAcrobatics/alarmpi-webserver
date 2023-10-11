@@ -177,6 +177,10 @@ export class VlcBridge {
         await this.exec("stop");
     }
 
+    async clear() {
+        await this.exec("clear");
+    }
+
     /**
      * Terminate the VLC process.
      */

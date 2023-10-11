@@ -10,17 +10,26 @@ export class AlarmPlayer {
         this._events = appEvents;
         this._vlc = new VlcBridge();
 
+        this.soundFiles = null;
+
         this.enableEventHandlers();
     }
 
     enableEventHandlers() {
+        this._events.on('alarmpi-reload', async (alarmsettings) => {
+            console.log(`AlarmPlayer.alarmpi-reload: ${alarmsettings}`)
+            await this._vlc.stop();
+            await this._vlc.clear();
+            await this.loadPlaylist();
+        });
+
         this._events.on('alarmpi-start', async (alarmsettings) => {
-            console.log(`vlc received alarmpi-start: ${alarmsettings}`)
+            console.log(`AlarmPlayer.alarmpi-start: ${alarmsettings}`)
             await this._vlc.play().catch(e => console.log(`Vlc failed "start": ${e}`));
         });
 
         this._events.on('alarmpi-stop', async (alarmsettings) => {
-            console.log(`vlc received alarmpi-stop ${alarmsettings}`)
+            console.log(`AlarmPlayer.alarmpi-stop ${alarmsettings}`)
             await this._vlc.stop().catch(e => console.log(`Vlc failed "stop": ${e}`));
         });
 
@@ -40,16 +49,23 @@ export class AlarmPlayer {
      async init() {
         await this._vlc.open().catch((e) =>
             console.warn(`Failed to open VLC ${e}`));
+        await this.loadPlaylist();
+    }
 
-        // load the sound files into the vlc bridge.
-        fs.readdir(this._settings.alarmSoundFolder)
-            .then(soundfiles => {
-                soundfiles.forEach(file => {
-                    this._vlc.add(this._settings.alarmSoundFolder + "/" + file)
-                        .catch(() =>
-                            console.warn(`Failed to add ${file} to playlist`)
-                        );
-                });
-            });
+    async loadPlaylist() {
+        await this._vlc.clear().catch((e) =>
+                    console.warn(`Failed to clear VLC playlist: ${e}`));
+
+        if(this.soundFiles == null) {
+            await fs.readdir(this._settings.alarmSoundFolder)
+                .then(soundfiles => this.soundFiles = soundfiles);
+        }
+
+        this.soundFiles.forEach(file => {
+            this._vlc.add(this._settings.alarmSoundFolder + "/" + file)
+                .catch(() =>
+                    console.warn(`Failed to add ${file} to playlist`)
+                );
+        });
     }
 }

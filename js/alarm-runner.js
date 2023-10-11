@@ -78,6 +78,7 @@ export class AlarmRunner {
 
     async run() {
         console.log(`Started running an alarm at: ${new Date()}`);
+        this._events.emit('alarmpi-reload', this._alarmConf);
 
         let snoozeNextIteration = false;
         let snoozesLeft = this._settings.snoozeCount;
