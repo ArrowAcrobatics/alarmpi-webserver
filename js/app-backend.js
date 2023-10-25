@@ -3,7 +3,7 @@ import * as fs from 'node:fs/promises';
 
 import {VlcBridge} from "./vlc-bridge.js";
 import {AlarmScheduler} from "./alarm-scheduler.js";
-import {AlarmStorage} from "./alarm-storage.js";
+import {Storage} from "./storage.js";
 import {GpioHandler} from "./gpio-handler.js";
 
 import { EventEmitter } from 'node:events';
@@ -21,7 +21,7 @@ export class AppBackend {
         this._events = new AppBackendEmitter();
 
         this.alarmScheduler = new AlarmScheduler(settings, this._events);
-        this.alarmStorage = new AlarmStorage(settings, this._events);
+        this.alarmStorage = new Storage(settings, this._events);
         this.gpioHandler = new GpioHandler(settings, this._events);
         this.alarmPlayer = new AlarmPlayer(settings, this._events);
         this.audioUi = new AudioUi(settings, this._events);
