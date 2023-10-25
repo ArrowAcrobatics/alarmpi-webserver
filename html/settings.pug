@@ -3,6 +3,9 @@ extends page-outline.pug
 include alarm-mixin
 include vlc-debug-ui
 include alarm-gpio-ui
+include buttons/save-button
+include buttons/add-button
+
 
 block header
     h1 Alarmpi - Settings
@@ -11,13 +14,11 @@ block content
     ul#sortable(style="width: 25em")
         +vlc_debug_mixin()
         +gpio_debug_mixin()
-        hello world
+        p hello world
 
 block bottombuttons
-    button.btn.btn-primary.bg-custom-light-dark.alarmpi-add
-        i.fas.fa-plus(aria-hidden="true")
-    button.btn.btn-primary.bg-custom-light-dark.alarmpi-save
-        i.fas.fa-save(aria-hidden="true")
+    +add_button()
+    +save_button()
 
 block footer
     h3 TODO

@@ -1,6 +1,7 @@
 include alarm-mixin
 include vlc-debug-ui
 include alarm-gpio-ui
+inlucde buttons/debug-button
 
 doctype html
 html(lang="en")
@@ -20,8 +21,7 @@ html(lang="en")
                 #alarm-container.d-flex.justify-content-center.vstack
                     .d-flex.align-items-end.flex-column.button-ribbon
                         .d-flex.btn-group
-                            button.btn.btn-primary.bg-custom-light-dark.alarmpi-debug
-                                i.fas.fa-bug(aria-hidden="true")
+                            +debug_button()
                     block content
                     .d-flex.align-items-end.flex-column.button-ribbon
                         .d-flex.btn-group
