@@ -5,7 +5,7 @@ include vlc-debug-ui
 include alarm-gpio-ui
 
 block header
-    h1 Alarmpi 0.2
+    h1 Alarmpi - Settings
 
 block content
     ul#sortable(style="width: 25em")
@@ -20,18 +20,8 @@ block bottombuttons
         i.fas.fa-save(aria-hidden="true")
 
 block footer
-    h3 Must
+    h3 TODO
     ul
-        li settings page
         li music selection
         li music uploading
-    h3 Could
-    ul
-        li mention time + next alarm on black button
-        li mode selection (for I-0-II switch)
-    h3 Nice
-    ul
-        li prettyfi newly added buttons by bootstrapToggle() call
-        li file write throttle for sd card burn in reduction
-        li turn off pm2 logging for sd card burn in reduction
-
+        li snooze interval etc
