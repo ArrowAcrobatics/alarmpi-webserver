@@ -1,0 +1,38 @@
+extends page-outline.pug
+
+include alarm-mixin
+include vlc-debug-ui
+include alarm-gpio-ui
+
+block header
+    h1 Alarmpi 0.2
+
+block content
+    ul#sortable(style="width: 25em")
+        +vlc_debug_mixin()
+        +gpio_debug_mixin()
+        each alarm in alarms
+            +alarm_mixin(alarm)
+
+block bottombuttons
+    button.btn.btn-primary.bg-custom-light-dark.alarmpi-add
+        i.fas.fa-plus(aria-hidden="true")
+    button.btn.btn-primary.bg-custom-light-dark.alarmpi-save
+        i.fas.fa-save(aria-hidden="true")
+
+block footer
+    h3 Must
+    ul
+        li settings page
+        li music selection
+        li music uploading
+    h3 Could
+    ul
+        li mention time + next alarm on black button
+        li mode selection (for I-0-II switch)
+    h3 Nice
+    ul
+        li prettyfi newly added buttons by bootstrapToggle() call
+        li file write throttle for sd card burn in reduction
+        li turn off pm2 logging for sd card burn in reduction
+

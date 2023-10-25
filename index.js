@@ -26,6 +26,9 @@ app.use(bodyParser.json());
 // endpoints
 app.get("/", (req,res) => backend.onGetIndex(req,res));
 app.post("/", (req,res) => backend.onPostAlarm(req,res));
+
+app.get("/settings", (req,res) => backend.onGetSettings(req,res));
+
 app.post("/vlc", (req,res) => backend.onPostVlcCommand(req,res));
 app.post("/gpio", (req,res) => backend.onPostGpioCommand(req,res));
 

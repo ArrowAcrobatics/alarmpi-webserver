@@ -16,6 +16,7 @@ export class AppBackend {
     constructor(settings) {
         this.settings = settings;
         this.pugRenderAlarmsPage = null;
+        this.pugRenderSettingsPage = null;
 
         this._events = new AppBackendEmitter();
 
@@ -54,6 +55,7 @@ export class AppBackend {
 
         // noinspection JSCheckFunctionSignatures
         this.pugRenderAlarmsPage = pug.compileFile('html/alarms.pug', pugOptions);
+        this.pugRenderSettingsPage = pug.compileFile('html/settings.pug', pugOptions);
 
         let pugRenderAlarmClientJsStr = pug.compileFileClient(pugAlarmClientFileOrig,
                                             Object.assign({name: pugAlarmClientFuncName}, pugOptions));
@@ -73,6 +75,14 @@ export class AppBackend {
     async onGetIndex(request, response) {
         console.log("get request: / from: " + request.headers.host);
         response.send(this.pugRenderAlarmsPage(await this.alarmStorage.getAlarms()));
+    }
+
+    /**
+     * Get request handler: Renders the settings view from disk.
+     */
+    async onGetSettings(request, response) {
+        console.log("get request: /settings from: " + request.headers.host);
+        response.send(this.pugRenderSettingsPage());
     }
 
     /**
