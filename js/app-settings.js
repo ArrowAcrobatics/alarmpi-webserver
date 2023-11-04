@@ -14,8 +14,8 @@ export class AppSettings {
         this.uiSoundLongBlip = this.uiSoundFolder + "/ui-long-blip.mp3";
         this.uiSoundShortBlip = this.uiSoundFolder + "/ui-short-blip.mp3";
 
-        this.snoozeTimeMs = 30*1000;
-        this.ringTimeMs = 10*1000;
+        this.snoozeTimeMs = 5*60*1000;
+        this.ringTimeMs = 3*60*1000;
         this.snoozeCount = 3; // max amount of consecutive accepted snoozes.
         this.ringCount = 4; // max amount of consecutive rings.
 
